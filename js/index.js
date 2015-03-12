@@ -2,18 +2,15 @@
 import util.underscore as _;
 /* jshint ignore:end */
 function pluginSend(evt, params) {
-	NATIVE && NATIVE.plugins && NATIVE.plugins.sendEvent &&
 		NATIVE.plugins.sendEvent('GameThrivePlugin', evt,
 			JSON.stringify(params || {}));
 }
 
 function pluginOn(evt, next) {
-	NATIVE && NATIVE.events && NATIVE.events.registerHandler &&
 		NATIVE.events.registerHandler(evt, next);
 }
 
-// TODO Queries
-var GameThrive = Class(function() {
+exports = new (Class(function() {
 
   var that = this;
 
@@ -45,10 +42,10 @@ var GameThrive = Class(function() {
   this.sendTags = function (obj) {
     pluginSend('sendTags', obj);
   };
-  //GetTags
+
+  //GetTag(NotificationOpenedCount)
   this.getNotificationOpenedCount = function (key) {
     pluginSend('getNotificationOpenedCount');
   };
 
-});
-exports = new GameThrive();
+}))();
