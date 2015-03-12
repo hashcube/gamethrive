@@ -7,7 +7,6 @@ import com.tealeaf.logger;
 
 import java.util.Date;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import com.tealeaf.util.HTTP;
@@ -16,7 +15,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.Context;
 import android.os.Bundle;
-import android.view.*;
+
 import android.content.pm.PackageManager;
 import android.content.pm.ApplicationInfo;
 import android.app.AlertDialog;
