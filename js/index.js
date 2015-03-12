@@ -1,8 +1,9 @@
+/* jshint ignore:start */
 import util.underscore as _;
-
+/* jshint ignore:end */
 function pluginSend(evt, params) {
 	NATIVE && NATIVE.plugins && NATIVE.plugins.sendEvent &&
-		NATIVE.plugins.sendEvent("GameThrivePlugin", evt,
+		NATIVE.plugins.sendEvent('GameThrivePlugin', evt,
 			JSON.stringify(params || {}));
 }
 
@@ -12,14 +13,14 @@ function pluginOn(evt, next) {
 }
 
 // TODO Queries
-var GameThrive = Class (function () {
+var GameThrive = Class(function() {
 
   var that = this;
 
-  NATIVE.events.registerHandler("gamethriveNotificationOpened", function(v) {
-    logger.log("{gameThriveIndex} Push notification opened");
+  NATIVE.events.registerHandler('gamethriveNotificationOpened', function(v) {
+    logger.log('{gameThriveIndex} Push notification opened');
 
-    if(!v.failed) {
+    if (!v.failed) {
       tags = {};
       tags.last_notification_opened_on =  v.notification_opened_on;
 
@@ -29,9 +30,9 @@ var GameThrive = Class (function () {
     }
   });
 
-  NATIVE.events.registerHandler("gamethriveGotData", function(v) {
+  NATIVE.events.registerHandler('gamethriveGotData', function(v) {
     if(!v.failed) {
-      logger.log("{gameThriveIndex} retrieved data", v.noOpCount);
+      logger.log('{gameThriveIndex} retrieved data', v.noOpCount);
 
       tags = {};
       tags.notification_opened_count =  parseInt(v.noOpCount,10) + 1;
