@@ -1,0 +1,13 @@
+{
+		"copyFiles": [
+			"GameThrivePlugin.java"
+		],
+		"libraries": [
+		],
+		"jars": [
+			"libs/GameThriveSDK.jar",
+			"libs/android-support-v4.jar"
+		],
+		"injectionXML": "manifest.xml",
+		"injectionXSL": "manifest.xsl"
+}
