@@ -31,7 +31,7 @@
   </intent-filter>
 </receiver>
 <receiver
-   android:name="com.tealeaf.plugin.plugins.GameThrivePlugin"
+   android:name="com.tealeaf.plugin.plugins.GameThrivePlugin.gameBroadcastReciever"
    android:exported="false">
   <intent-filter>
      <action android:name="com.gamethrive.BackgroundBroadcast.RECEIVE" />

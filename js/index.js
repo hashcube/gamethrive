@@ -26,14 +26,14 @@ exports = new (Class(function() {
     }
   });
 
-  NATIVE.events.registerHandler('gamethriveNotificationRecieved', function(v) {
+  NATIVE.events.registerHandler('gamethriveNotificationReceived', function(v) {
     if (!v.failed) {
-      logger.log('{gameThriveIndex} Push notification recieved');
+      logger.log('{gameThriveIndex} Push notification Received');
 
       var tags = {};
-      tags.last_notification_recieved_on =  v.notification_recieved_on;
+      tags.last_notification_Received_on =  v.notification_Received_on;
 
-      that.getNotificationRecievedCount();
+      that.getNotificationReceivedCount();
 
       pluginSend('sendTags', tags);
     }
@@ -52,10 +52,10 @@ exports = new (Class(function() {
 
   NATIVE.events.registerHandler('gamethriveGotRecievved', function(v) {
     if(!v.failed) {
-      logger.log('{gameThriveIndex} retrieved notification recieved count : ', v.notification_Recieve_Count);
+      logger.log('{gameThriveIndex} retrieved notification Received count : ', v.notification_Receive_Count);
 
       var tags = {};
-      tags.notification_recieved_count =  parseInt(v.notification_Recieve_Count,10) + 1;
+      tags.notification_Received_count =  parseInt(v.notification_Receive_Count,10) + 1;
 
       pluginSend('sendTags', tags);
     }
@@ -72,8 +72,8 @@ exports = new (Class(function() {
     pluginSend('getNotificationOpenedCount', {});
   };
 
-  //GetTag(NotificationRecievedCount)
-  this.getNotificationRecievedCount = function () {
-    pluginSend('getNotificationRecievedCount', {});
+  //GetTag(NotificationReceivedCount)
+  this.getNotificationReceivedCount = function () {
+    pluginSend('getNotificationReceivedCount', {});
   };
 }))();

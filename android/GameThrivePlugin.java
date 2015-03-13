@@ -41,14 +41,14 @@ public class GameThrivePlugin implements IPlugin {
     }
   }
 
-  public class gamethriveNotificationRecieved extends com.tealeaf.event.Event {
+  public class gamethriveNotificationReceived extends com.tealeaf.event.Event {
     boolean failed;
-    String notification_recieved_on;
+    String notification_received_on;
 
-    public gamethriveNotificationRecieved(String recieved_on) {
-      super("gamethriveNotificationRecieved");
+    public gamethriveNotificationReceived(String received_on) {
+      super("gamethriveNotificationReceived");
       this.failed = false;
-      this.notification_recieved_on = recieved_on;
+      this.notification_received_on = received_on;
     }
   }
 
@@ -63,14 +63,14 @@ public class GameThrivePlugin implements IPlugin {
     }
   }
 
-  public class gamethriveGotRecieved extends com.tealeaf.event.Event {
+  public class gamethriveGotReceived extends com.tealeaf.event.Event {
     boolean failed;
-    String notification_Recieve_Count;
+    String notification_Receive_Count;
 
-    public gamethriveGotRecieved(String reCount) {
-      super("gamethriveGotRecieved");
+    public gamethriveGotReceived(String reCount) {
+      super("gamethriveGotReceived");
       this.failed = false;
-      this.notification_Recieve_Count = reCount;
+      this.notification_Receive_Count = reCount;
     }
   }
 
@@ -128,20 +128,20 @@ public class GameThrivePlugin implements IPlugin {
     }
   }
 
-  //Get notification_recieved_count, Other tags can be gotten in the same way
+  //Get notification_received_count, Other tags can be gotten in the same way
   public void getNotificationReceievedCount(String params) {
     try {
-      logger.log(TAG, "Get notification recieved count");
+      logger.log(TAG, "Get notification received count");
 
       gameThrive.getTags(new GetTagsHandler() {
         @Override
         public void tagsAvailable(JSONObject rTags) {
           logger.log(TAG, "retrieved data : ", rTags.toString());
           try {
-            EventQueue.pushEvent(new gamethriveGotRecieved
-                                 (rTags.get("notification_recieved_count").toString()));
+            EventQueue.pushEvent(new gamethriveGotReceived
+                                 (rTags.get("notification_received_count").toString()));
           } catch (org.json.JSONException eJ){
-            EventQueue.pushEvent(new gamethriveGotRecieved("0"));
+            EventQueue.pushEvent(new gamethriveGotReceived("0"));
             logger.log(TAG, "Recieving notification for the first time");
           } catch (Exception e) {
              e.printStackTrace();
@@ -204,7 +204,7 @@ public class GameThrivePlugin implements IPlugin {
   }
 
   // NotificationOpenedHandler is implemented in its own class instead of adding implements to MainActivity so we don't hold on to a reference of our first activity if it gets recreated.
-  private class gameNotificationOpenedHandler implements NotificationOpenedHandler {
+  public class gameNotificationOpenedHandler implements NotificationOpenedHandler {
     /**
      * Callback to implement in your app to handle when a notification is opened from the Android status bar
      */
@@ -217,15 +217,15 @@ public class GameThrivePlugin implements IPlugin {
     }
   }
 
-  private class gameBroadcastReceiver extends BroadcastReceiver {
+  public class gameBroadcastReceiver extends BroadcastReceiver {
 
     // You may consider adding a wake lock here if you need to make sure the devices doesn't go to sleep while processing.
     // We recommend starting a service of your own here if your doing any async calls or doing any heavy processing.
     @Override
     public void onReceive(Context context, Intent intent) {
-      Date recieved_on_time = new Date();
+      Date received_on_time = new Date();
 
-      EventQueue.pushEvent(new gamethriveNotificationRecieved(recieved_on_time.toString()));
+      EventQueue.pushEvent(new gamethriveNotificationReceived(received_on_time.toString()));
     }
   }
 }
