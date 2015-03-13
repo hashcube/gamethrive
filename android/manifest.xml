@@ -9,8 +9,11 @@
 
 <permission android:name="com.hashcube.sudokuquest.permission.C2D_MESSAGE" android:protectionLevel="signature" />
 <uses-permission android:name="com.hashcube.sudokuquest.permission.C2D_MESSAGE" />
-<!--END_PLUGINS_MANIFEST-->
 
+<uses-permission android:name="com.amazon.device.messaging.permission.RECEIVE" />
+<permission android:name="com.hashcube.sudokuquest.permission.RECEIVE_ADM_MESSAGE" android:protectionLevel="signature" />
+<uses-permission android:name="com.hashcube.sudokuquest.permission.RECEIVE_ADM_MESSAGE" />
+<!--END_PLUGINS_MANIFEST-->
 <!--START_PLUGINS_APPLICATION-->
 <!-- GameThrive -->
 <meta-data android:name="googleProjectNo" android:value="" />
@@ -27,5 +30,25 @@
     <category android:name="com.hashcube.sudokuquest" />
   </intent-filter>
 </receiver>
+<receiver
+   android:name="com.tealeaf.plugin.plugins.GameThrivePlugin"
+   android:exported="false">
+  <intent-filter>
+     <action android:name="com.gamethrive.BackgroundBroadcast.RECEIVE" />
+  </intent-filter>
+</receiver>
 <service android:name="com.gamethrive.GcmIntentService" />
+
+<amazon:enable-feature android:name="com.amazon.device.messaging" android:required="false"/>
+<activity android:name="com.gamethrive.NotificationOpenedActivity"/>
+<service android:name="com.gamethrive.ADMMessageHandler" android:exported="false" />
+<receiver
+    android:name="com.gamethrive.ADMMessageHandler$Receiver"
+    android:permission="com.amazon.device.messaging.permission.SEND" >
+  <intent-filter>
+    <action android:name="com.amazon.device.messaging.intent.REGISTRATION" />
+    <action android:name="com.amazon.device.messaging.intent.RECEIVE" />
+    <category android:name="com.hashcube.sudokuquest" />
+  </intent-filter>
+</receiver>
 <!--END_PLUGINS_APPLICATION-->
