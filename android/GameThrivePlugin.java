@@ -26,9 +26,6 @@ import com.gamethrive.NotificationOpenedHandler;
 
 public class GameThrivePlugin implements IPlugin {
 
-  Context _ctx;
-  Activity _activity;
-
   private static final String TAG = "{{GameThrivePlugin}}";
 
   private static GameThrive gameThrive;
@@ -78,13 +75,11 @@ public class GameThrivePlugin implements IPlugin {
   }
 
   public void onCreateApplication(Context applicationContext) {
-    this._ctx = applicationContext;
   }
 
   public void onCreate(Activity activity, Bundle savedInstanceState) {
     String g_Project_Number = null, appID = null;
 
-    this._activity = activity;
     PackageManager manager = activity.getPackageManager();
 
     logger.log("GAMETHRIVE INITIALIZED", TAG);
