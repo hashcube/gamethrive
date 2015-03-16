@@ -3,13 +3,11 @@ package com.tealeaf.plugin.plugins;
 import com.gamethrive.GameBroadcastReceiver;
 
 import com.tealeaf.EventQueue;
-import com.tealeaf.event.Event;
 import com.tealeaf.plugin.IPlugin;
 import com.tealeaf.logger;
 
 import java.util.Date;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.content.Intent;
