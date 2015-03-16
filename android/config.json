@@ -1,6 +1,7 @@
 {
 		"copyFiles": [
-			"GameThrivePlugin.java"
+			"GameThrivePlugin.java",
+			"GameBroadcastReceiver.java"
 		],
 		"libraries": [
 		],

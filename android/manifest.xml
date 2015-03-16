@@ -18,7 +18,7 @@
 <!-- GameThrive -->
 <meta-data android:name="googleProjectNo" android:value="" />
 <meta-data android:name="gameThriveAppID" android:value="" />
-<!-- Permissions -->
+
 <meta-data android:name="com.google.android.gms.version"
            android:value="@integer/google_play_services_version" />
 <activity android:name="com.gamethrive.NotificationOpenedActivity"/>
@@ -30,24 +30,12 @@
     <category android:name="com.hashcube.sudokuquest" />
   </intent-filter>
 </receiver>
-<receiver
-   android:name="com.tealeaf.plugin.plugins.GameThrivePlugin.gameBroadcastReciever"
-   android:exported="false">
-  <intent-filter>
-     <action android:name="com.gamethrive.BackgroundBroadcast.RECEIVE" />
-  </intent-filter>
-</receiver>
 <service android:name="com.gamethrive.GcmIntentService" />
 
-<amazon:enable-feature android:name="com.amazon.device.messaging" android:required="false"/>
-<activity android:name="com.gamethrive.NotificationOpenedActivity"/>
-<service android:name="com.gamethrive.ADMMessageHandler" android:exported="false" />
 <receiver
-    android:name="com.gamethrive.ADMMessageHandler$Receiver"
-    android:permission="com.amazon.device.messaging.permission.SEND" >
+   android:name="com.gamethrive.GameBroadcastReceiver">
   <intent-filter>
-    <action android:name="com.amazon.device.messaging.intent.REGISTRATION" />
-    <action android:name="com.amazon.device.messaging.intent.RECEIVE" />
+    <action android:name="com.google.android.c2dm.intent.RECEIVE" />
     <category android:name="com.hashcube.sudokuquest" />
   </intent-filter>
 </receiver>
