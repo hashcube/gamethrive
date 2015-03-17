@@ -1,14 +1,14 @@
 {
-		"copyFiles": [
-			"GameThrivePlugin.java",
-			"GameBroadcastReceiver.java"
-		],
-		"libraries": [
-		],
-		"jars": [
-			"libs/GameThriveSDK.jar",
-			"libs/android-support-v4.jar"
-		],
-		"injectionXML": "manifest.xml",
-		"injectionXSL": "manifest.xsl"
+  "copyFiles": [
+   "GameThrivePlugin.java",
+    "GameBroadcastReceiver.java"
+  ],
+  "libraries": [
+  ],
+  "jars": [
+    "libs/GameThriveSDK.jar",
+    "libs/android-support-v4.jar"
+  ],
+  "injectionXML": "manifest.xml",
+  "injectionXSL": "manifest.xsl"
 }
