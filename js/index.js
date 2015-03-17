@@ -26,7 +26,7 @@ exports = new (Class(function() {
   NATIVE.events.registerHandler('gamethriveNotificationReceived', function(v) {
     if (!v.failed) {
       var tags = {};
-      tags.last_notification_received_on =  v.notification_received_on
+      tags.last_notification_received_on =  v.notification_received_on;
 
       that.getNotificationReceivedCount();
       pluginSend('sendTags', tags);
