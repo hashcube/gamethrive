@@ -12,15 +12,27 @@
 <permission android:name="adm_message"/>
 <uses-permission android:name="packageNamePermissionRECEIVE" />
 <uses-permission android:name="com.amazon.device.messaging.permission.RECEIVE" />
-
 <!--END_PLUGINS_MANIFEST-->
 <!--START_PLUGINS_APPLICATION-->
 <!-- GameThrive -->
 <meta-data android:name="googleProjectNo" android:value="" />
 <meta-data android:name="gameThriveAppID" android:value="" />
-
 <meta-data android:name="com.google.android.gms.version"
            android:value="@integer/google_play_services_version" />
+
+<amazon:enable-feature android:name="com.amazon.device.messaging" android:required="false"/>
+
+<service android:name="com.gamethrive.ADMMessageHandler"/>
+<receiver
+    android:name="com.gamethrive.ADMMessageHandler$Receiver"
+    android:permission="com.amazon.device.messaging.permission.SEND" >
+  <intent-filter>
+    <action android:name="com.amazon.device.messaging.intent.REGISTRATION" />
+    <action android:name="com.amazon.device.messaging.intent.RECEIVE" />
+    <category android:name="packageName" />
+  </intent-filter>
+</receiver>
+
 <activity android:name="com.gamethrive.NotificationOpenedActivity"/>
 <receiver
     android:name="com.gamethrive.GcmBroadcastReceiver"
@@ -33,9 +45,11 @@
 <service android:name="com.gamethrive.GcmIntentService" />
 
 <receiver
-   android:name="com.gamethrive.GameBroadcastReceiver">
+    android:name="com.gamethrive.GameBroadcastReceiver"
+    android:permission="com.amazon.device.messaging.permission.SEND" >
   <intent-filter>
     <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+    <action android:name="com.amazon.device.messaging.intent.RECEIVE" />
     <category android:name="packageName" />
   </intent-filter>
 </receiver>

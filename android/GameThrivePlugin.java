@@ -29,7 +29,7 @@ public class GameThrivePlugin implements IPlugin {
 
   private static GameThrive gameThrive;
 
-  private GameBroadcastReceiver gameBroadcastReceiver = new GameBroadcastReceiver();
+  private static GameBroadcastReceiver gameBroadcastReceiver = new GameBroadcastReceiver();
 
   public class gamethriveNotificationOpened extends com.tealeaf.event.Event {
     boolean failed;
@@ -144,8 +144,8 @@ public class GameThrivePlugin implements IPlugin {
         @Override
         public void tagsAvailable(JSONObject rTags) {
           Integer notificationReceivedCount = 0;
-
           notificationReceivedCount = gameBroadcastReceiver.getReceiveCount() - 1;
+
           logger.log(TAG, "retrieved data for receive : ");
           try {
 
