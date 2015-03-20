@@ -80,13 +80,11 @@ public class GameThrivePlugin implements IPlugin {
 
   public void onCreate(Activity activity, Bundle savedInstanceState) {
     String g_Project_Number = null, appID = null;
-    Date notificationReceived = null;
     PackageManager manager = activity.getPackageManager();
 
     logger.log("GAMETHRIVE INITIALIZED", TAG);
 
     try {
-      notificationReceived = gameBroadcastReceiver.getReceiveDate();
 
       if (gameThrive == null){
         Bundle meta = manager.getApplicationInfo(activity.getPackageName(), PackageManager.GET_META_DATA).metaData;
@@ -103,11 +101,6 @@ public class GameThrivePlugin implements IPlugin {
           logger.log("Gamethrive instance created", TAG);
         }
       }
-
-      if(notificationReceived!=null)
-      {
-        EventQueue.pushEvent(new gamethriveNotificationReceived(notificationReceived.toString()));
-      }
     }
     catch (Exception e) {
       e.printStackTrace();
@@ -123,7 +116,15 @@ public class GameThrivePlugin implements IPlugin {
   @Override
   public void onResume() {
     // super.onResume();
+    Date notificationReceived = null;
+
     gameThrive.onResumed();
+    notificationReceived = gameBroadcastReceiver.getReceiveDate();
+    if(notificationReceived!=null)
+    {
+      logger.log("Notification received on: ", notificationReceived, TAG);
+      EventQueue.pushEvent(new gamethriveNotificationReceived(notificationReceived.toString()));
+    }
   }
 
   //Send tags to gameThrive
