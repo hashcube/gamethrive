@@ -115,6 +115,9 @@ public class GameThrivePlugin implements IPlugin {
 
   @Override
   public void onResume() {
+  }
+
+  private void checkNotification() {
     // super.onResume();
     Date notificationReceived = null;
 
@@ -202,6 +205,7 @@ public class GameThrivePlugin implements IPlugin {
   }
 
   public void onNewIntent(Intent intent) {
+    checkNotification();
   }
 
   public void setInstallReferrer(String referrer) {
