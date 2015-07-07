@@ -5,7 +5,7 @@
 
 @property (strong, nonatomic) OneSignal *oneSignal;
 @property (nonatomic, retain) NSData *deviceToken;
-@property (nonatomic, assign) BOOL initDone;
+@property (nonatomic) BOOL initDone;
 @property (nonatomic, retain) NSMutableDictionary *tags;
 
 @end
@@ -15,24 +15,24 @@
 // The plugin must call super dealloc.
 - (void) dealloc {
 	[self.deviceToken release];
-    [self.tags release];
+	[self.tags release];
 	[super dealloc];
 }
 
 // The plugin must call super init.
 - (id) init {
 	if(self = [super init]) {
-	  self.initDone = NO;
-	  self.deviceToken = nil;
-      self.tags = nil;
-  }
+		self.initDone = NO;
+		self.deviceToken = nil;
+		self.tags = nil;
+	}
 	return self;
 }
 
 - (void) initializeWithManifest:(NSDictionary *)manifest appDelegate:(TeaLeafAppDelegate *)appDelegate {
 	@try {
-        //ONLY DURING DEBUG
-        //[OneSignal setLogLevel: ONE_S_LL_VERBOSE visualLevel: ONE_S_LL_VERBOSE];
+		//ONLY DURING DEBUG
+		//[OneSignal setLogLevel: ONE_S_LL_VERBOSE visualLevel: ONE_S_LL_VERBOSE];
 
 		NSDictionary *ios = [manifest valueForKey:@"ios"];
 		NSString *gamethriveAppId = [ios valueForKey:@"gameThriveAppID"];
@@ -42,23 +42,22 @@
 		self.oneSignal = [[OneSignal alloc] initWithLaunchOptions:launchOptions
 			appId: gamethriveAppId
 			handleNotification: NULL
-            autoRegister:YES];
+			autoRegister:YES];
 
 		self.initDone = YES;
 	}
 	@catch (NSException *exception) {
 		NSLog(@"{gamethrive} Failed to initialize with exception: %@", exception);
 	}
-
 }
 
 - (void) didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken application:(UIApplication *)app {
 	if(self.initDone && (self.deviceToken == nil)) {
-        self.deviceToken = deviceToken;
-        if(self.tags) {
-            [self.oneSignal sendTags: self.tags];
-            [self.tags removeAllObjects];
-        }
+		self.deviceToken = deviceToken;
+		if(self.tags) {
+			[self.oneSignal sendTags: self.tags];
+			[self.tags removeAllObjects];
+		}
 	}
 }
 
@@ -89,15 +88,15 @@
 }
 
 - (void) sendTags:( NSDictionary *)tags {
-    if(self.tags == nil) {
-        self.tags = [[NSMutableDictionary alloc] initWithDictionary:tags copyItems:true];
-    } else {
-        [self.tags addEntriesFromDictionary: tags];
-    }
-    if(self.initDone && self.deviceToken) {
-	    [self.oneSignal sendTags: self.tags];
-        [self.tags removeAllObjects];
-    }
+	if(self.tags == nil) {
+		self.tags = [[NSMutableDictionary alloc] initWithDictionary:tags copyItems:true];
+	} else {
+		[self.tags addEntriesFromDictionary: tags];
+	}
+	if(self.initDone && self.deviceToken) {
+		[self.oneSignal sendTags: self.tags];
+		[self.tags removeAllObjects];
+	}
 }
 
 @end
