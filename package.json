@@ -1,12 +1,13 @@
 {
   "name": "gamethrive",
-  "version": "0.0.1",
+  "version": "1.9.0",
   "devkit": {
     "clientPaths": {
       "gamethrive": "js"
     },
     "extensions": {
-      "android": "android"
+      "android": "android",
+      "ios": "ios"
     }
   }
 }
