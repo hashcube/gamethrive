@@ -1,13 +1,13 @@
 {
-	"code": [
-		"GameThrivePlugin.h",
-		"GameThrivePlugin.mm"
-	],
-	"frameworks": [
-		"SystemConfiguration",
-		"OneSignal.framework"
-	],
-	"additionalLinkerFlags": [
-		"-ObjC"
-	]
+  "code": [
+    "GameThrivePlugin.h",
+    "GameThrivePlugin.mm"
+  ],
+  "frameworks": [
+    "SystemConfiguration",
+    "OneSignal.framework"
+  ],
+  "additionalLinkerFlags": [
+    "-ObjC"
+  ]
 }
