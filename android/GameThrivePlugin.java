@@ -1,6 +1,6 @@
 package com.tealeaf.plugin.plugins;
 
-import com.gamethrive.GameBroadcastReceiver;
+import com.onesignal.GameBroadcastReceiver;
 
 import com.tealeaf.EventQueue;
 import com.tealeaf.plugin.IPlugin;
@@ -18,16 +18,16 @@ import android.os.Bundle;
 import android.content.pm.PackageManager;
 import android.content.pm.ApplicationInfo;
 
-import com.gamethrive.GameThrive;
-import com.gamethrive.GameThrive.*;
+import com.onesignal.OneSignal;
+import com.onesignal.OneSignal.*;
 
-import com.gamethrive.NotificationOpenedHandler;
+import com.onesignal.OneSignal.NotificationOpenedHandler;
 
 public class GameThrivePlugin implements IPlugin {
 
   private static final String TAG = "{{GameThrivePlugin}}";
 
-  private static GameThrive gameThrive;
+  private static boolean gameThrive = false;
 
   private static GameBroadcastReceiver gameBroadcastReceiver = new GameBroadcastReceiver();
 
@@ -86,7 +86,7 @@ public class GameThrivePlugin implements IPlugin {
 
     try {
 
-      if (gameThrive == null){
+      if (gameThrive == false){
         Bundle meta = manager.getApplicationInfo(activity.getPackageName(), PackageManager.GET_META_DATA).metaData;
 
         if (meta != null) {
@@ -97,7 +97,8 @@ public class GameThrivePlugin implements IPlugin {
         logger.log(g_Project_Number, appID, TAG);
 
         if (appID != null && g_Project_Number != null) {
-          gameThrive = new GameThrive(activity, g_Project_Number, appID, new gameNotificationOpenedHandler());
+          OneSignal.init(activity, g_Project_Number, appID, new gameNotificationOpenedHandler());
+          gameThrive = true;
           logger.log("Gamethrive instance created", TAG);
         }
       }
@@ -110,7 +111,7 @@ public class GameThrivePlugin implements IPlugin {
   @Override
   public void onPause() {
     // super.onPause();
-    gameThrive.onPaused();
+    OneSignal.onPaused();
   }
 
   @Override
@@ -121,7 +122,7 @@ public class GameThrivePlugin implements IPlugin {
     // super.onResume();
     Date notificationReceived = null;
 
-    gameThrive.onResumed();
+    OneSignal.onResumed();
     notificationReceived = gameBroadcastReceiver.getReceiveDate();
     if(notificationReceived!=null)
     {
@@ -135,7 +136,7 @@ public class GameThrivePlugin implements IPlugin {
     try {
       logger.log(TAG, "Send Tags : " , jsonData);
       JSONObject object = new JSONObject(jsonData);
-      gameThrive.sendTags(object);
+      OneSignal.sendTags(object);
     } catch (Exception e) {
       e.printStackTrace();
     }
@@ -144,7 +145,7 @@ public class GameThrivePlugin implements IPlugin {
   //Get notification_received_count, Other tags can be gotten in the same way
   public void getNotificationReceivedCount(String params) {
     try {
-      gameThrive.getTags(new GetTagsHandler() {
+      OneSignal.getTags(new GetTagsHandler() {
         @Override
         public void tagsAvailable(JSONObject rTags) {
           Integer notificationReceivedCount = 0;
@@ -175,7 +176,7 @@ public class GameThrivePlugin implements IPlugin {
   //Get notification_opened_count, Other tags can be gotten in the same way
   public void getNotificationOpenedCount(String params) {
     try {
-      gameThrive.getTags(new GetTagsHandler() {
+      OneSignal.getTags(new GetTagsHandler() {
         @Override
         public void tagsAvailable(JSONObject rTags) {
           logger.log(TAG, "retrieved data for open : ");
