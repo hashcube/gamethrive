@@ -22,9 +22,9 @@
 
 <amazon:enable-feature android:name="com.amazon.device.messaging" android:required="false"/>
 
-<service android:name="com.gamethrive.ADMMessageHandler"/>
+<service android:name="com.onesignal.ADMMessageHandler"/>
 <receiver
-    android:name="com.gamethrive.ADMMessageHandler$Receiver"
+    android:name="com.onesignal.ADMMessageHandler$Receiver"
     android:permission="com.amazon.device.messaging.permission.SEND" >
   <intent-filter>
     <action android:name="com.amazon.device.messaging.intent.REGISTRATION" />
@@ -33,19 +33,19 @@
   </intent-filter>
 </receiver>
 
-<activity android:name="com.gamethrive.NotificationOpenedActivity"/>
+<activity android:name="com.onesignal.NotificationOpenedActivity"/>
 <receiver
-    android:name="com.gamethrive.GcmBroadcastReceiver"
+    android:name="com.onesignal.GcmBroadcastReceiver"
     android:permission="com.google.android.c2dm.permission.SEND" >
   <intent-filter>
     <action android:name="com.google.android.c2dm.intent.RECEIVE" />
     <category android:name="packageName" />
   </intent-filter>
 </receiver>
-<service android:name="com.gamethrive.GcmIntentService" />
+<service android:name="com.onesignal.GcmIntentService" />
 
 <receiver
-    android:name="com.gamethrive.GameBroadcastReceiver"
+    android:name="com.onesignal.GameBroadcastReceiver"
     android:permission="com.amazon.device.messaging.permission.SEND">
   <intent-filter>
     <action android:name="com.amazon.device.messaging.intent.RECEIVE" />
@@ -54,7 +54,7 @@
 </receiver>
 
 <receiver
-    android:name="com.gamethrive.GameBroadcastReceiver">
+    android:name="com.onesignal.GameBroadcastReceiver">
   <intent-filter>
     <action android:name="com.google.android.c2dm.intent.RECEIVE" />
     <category android:name="packageName" />

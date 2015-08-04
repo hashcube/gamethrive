@@ -1,4 +1,4 @@
-package com.gamethrive;
+package com.onesignal;
 
 import com.tealeaf.logger;
 
