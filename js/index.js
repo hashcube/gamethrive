@@ -16,7 +16,7 @@ exports = new (Class(function() {
     flag = 0,
     data = {},
     invokeCallbacks = function (list) {
-      // Pop off the first two arguments and keep the rest
+      // Pop off the first argument and keep the rest
       var args = Array.prototype.splice.call(arguments, 1),
         len = list.length,
         i, next;
