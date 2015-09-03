@@ -62,7 +62,6 @@ exports = new (Class(function() {
   NATIVE.events.registerHandler('gamethriveGotOpened', function(v) {
     if(!v.failed) {
       var tags = {};
-      logger.log("{gamethrive} notification got opened", JSON.stringify(v));
       tags.notification_opened_count =
         parseInt(v.notification_Open_Count,10) + 1;
       data.notification_opened_count = tags.notification_opened_count;
