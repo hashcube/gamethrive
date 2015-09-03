@@ -9,6 +9,7 @@ import com.tealeaf.logger;
 import java.util.Date;
 
 import org.json.JSONObject;
+import org.json.JSONException;
 
 import android.content.Intent;
 import android.app.Activity;
@@ -33,20 +34,24 @@ public class GameThrivePlugin implements IPlugin {
 
   public class gamethriveNotificationOpened extends com.tealeaf.event.Event {
     boolean failed;
-    String notification_opened_on;
+    long notification_opened_on;
+    String segment_id, title, message;
 
-    public gamethriveNotificationOpened(String opened_on) {
+    public gamethriveNotificationOpened(long opened_on, String segment_id, String title, String message) {
       super("gamethriveNotificationOpened");
       this.failed = false;
       this.notification_opened_on = opened_on;
+      this.segment_id = segment_id;
+      this.title = title;
+      this.message = message;
     }
   }
 
   public class gamethriveNotificationReceived extends com.tealeaf.event.Event {
     boolean failed;
-    String notification_received_on;
+    long notification_received_on;
 
-    public gamethriveNotificationReceived(String received_on) {
+    public gamethriveNotificationReceived(long received_on) {
       super("gamethriveNotificationReceived");
       this.failed = false;
       this.notification_received_on = received_on;
@@ -116,18 +121,18 @@ public class GameThrivePlugin implements IPlugin {
 
   @Override
   public void onResume() {
+    checkNotification();
   }
 
   private void checkNotification() {
     // super.onResume();
-    Date notificationReceived = null;
+    long notificationReceived = -1;
 
     OneSignal.onResumed();
-    notificationReceived = gameBroadcastReceiver.getReceiveDate();
-    if(notificationReceived!=null)
+    notificationReceived = gameBroadcastReceiver.getReceiveDate().getTime();
+    if(notificationReceived!=-1)
     {
-      logger.log("Notification received on: ", notificationReceived, TAG);
-      EventQueue.pushEvent(new gamethriveNotificationReceived(notificationReceived.toString()));
+      EventQueue.pushEvent(new gamethriveNotificationReceived(notificationReceived));
     }
   }
 
@@ -231,10 +236,19 @@ public class GameThrivePlugin implements IPlugin {
     public void notificationOpened
     (String message, JSONObject additionalData, boolean isActive) {
 
-      Date opened_on_time = new Date();
-
+      Date current_on_time = new Date();
+      long opened_on_time = current_on_time.getTime();  
+      String segment_id = null; 
+      String title = null; 
+      try {
+        segment_id = additionalData.getString("segment_id");
+        title = additionalData.getString("title");
+      } catch (JSONException e) {
+        logger.log(TAG, "Error in jsondata");
+      }
+        
       EventQueue.pushEvent(new gamethriveNotificationOpened
-                           (opened_on_time.toString()));
+                           (opened_on_time, segment_id, title, message));
     }
   }
 }
