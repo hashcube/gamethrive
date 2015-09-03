@@ -100,7 +100,7 @@ exports = new (Class(function() {
 
   //GetTag(NotificationReceivedCount)
   this.getNotificationReceivedCount = function () {
-    flag =1;
+    flag = 1;
     pluginSend('getNotificationReceivedCount', {});
   };
 
