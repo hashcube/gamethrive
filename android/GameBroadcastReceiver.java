@@ -23,7 +23,10 @@ public class GameBroadcastReceiver extends BroadcastReceiver {
 
   public Date getReceiveDate()
   {
-    return received_on_time;
+    Date rt;
+    rt = received_on_time;
+    received_on_time = null;
+    return rt;
   }
 
   public Integer getReceiveCount()

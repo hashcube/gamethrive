@@ -30,53 +30,22 @@ public class GameThrivePlugin implements IPlugin {
 
   private static boolean gameThrive = false;
 
+  private static JSONObject gameThrive_data  = new JSONObject();
+
+  private static JSONObject data_to_send = new JSONObject();
+
+  private static Integer opened_count = 0;
+
   private static GameBroadcastReceiver gameBroadcastReceiver = new GameBroadcastReceiver();
-
-  public class gamethriveNotificationOpened extends com.tealeaf.event.Event {
-    boolean failed;
-    long notification_opened_on;
-    String segment_id, title, message;
-
-    public gamethriveNotificationOpened(long opened_on, String segment_id, String title, String message) {
-      super("gamethriveNotificationOpened");
-      this.failed = false;
-      this.notification_opened_on = opened_on;
-      this.segment_id = segment_id;
-      this.title = title;
-      this.message = message;
-    }
-  }
 
   public class gamethriveNotificationReceived extends com.tealeaf.event.Event {
     boolean failed;
-    long notification_received_on;
+    String notification_data;
 
-    public gamethriveNotificationReceived(long received_on) {
+    public gamethriveNotificationReceived(String notification_data) {
       super("gamethriveNotificationReceived");
       this.failed = false;
-      this.notification_received_on = received_on;
-    }
-  }
-
-  public class gamethriveGotOpened extends com.tealeaf.event.Event {
-    boolean failed;
-    String notification_Open_Count;
-
-    public gamethriveGotOpened(String opCount) {
-      super("gamethriveGotOpened");
-      this.failed = false;
-      this.notification_Open_Count = opCount;
-    }
-  }
-
-  public class gamethriveGotReceived extends com.tealeaf.event.Event {
-    boolean failed;
-    String notification_Receive_Count;
-
-    public gamethriveGotReceived(String recCount) {
-      super("gamethriveGotReceived");
-      this.failed = false;
-      this.notification_Receive_Count = recCount;
+      this.notification_data = notification_data;
     }
   }
 
@@ -121,55 +90,85 @@ public class GameThrivePlugin implements IPlugin {
 
   @Override
   public void onResume() {
-    checkNotification();
+    checkNotification(null);
   }
 
-  private void checkNotification() {
+  public void checkNotification(String jsonData) {
     // super.onResume();
-    long notificationReceived = -1;
-
-    OneSignal.onResumed();
-    notificationReceived = gameBroadcastReceiver.getReceiveDate().getTime();
-    if(notificationReceived!=-1)
+    Date notificationReceived = null;
+    long time_stamp = -1; 
+    Integer notificationReceivedCount = 0;
+    
+    if(jsonData != null) {
+      try {
+        JSONObject object = new JSONObject(jsonData);
+        sendTags(object);
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+    }
+    //OneSignal.onResumed();
+    notificationReceived = gameBroadcastReceiver.getReceiveDate();
+    
+    if(notificationReceived != null)
     {
-      EventQueue.pushEvent(new gamethriveNotificationReceived(notificationReceived));
+      time_stamp = notificationReceived.getTime();
+      notificationReceivedCount = gameBroadcastReceiver.getReceiveCount();
+      try {
+        gameThrive_data.put("notification_received_on", time_stamp); 
+        data_to_send.put("last_notification_received_on", 
+                                    notificationReceived.toString());
+        gameThrive_data.put("notification_received_count",
+                            notificationReceivedCount); 
+      } catch (Exception e) {
+        e.printStackTrace();
+      }
+      getNotificationReceivedCount(notificationReceivedCount);
+      EventQueue.pushEvent(new gamethriveNotificationReceived(
+                           gameThrive_data.toString()));
+      sendTags(data_to_send);
+      data_to_send = new JSONObject();
+      gameThrive_data = new JSONObject();
+      //Event
+      //reset objects both
     }
   }
 
   //Send tags to gameThrive
-  public void sendTags(String jsonData) {
+  public void sendTags(JSONObject jsonData) {
     try {
-      logger.log(TAG, "Send Tags : " , jsonData);
-      JSONObject object = new JSONObject(jsonData);
-      OneSignal.sendTags(object);
+      logger.log(TAG, "Send Tags : " , jsonData.toString());
+      OneSignal.sendTags(jsonData);
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
   //Get notification_received_count, Other tags can be gotten in the same way
-  public void getNotificationReceivedCount(String params) {
+  public void getNotificationReceivedCount(final Integer receivedCount) {
     try {
       OneSignal.getTags(new GetTagsHandler() {
         @Override
         public void tagsAvailable(JSONObject rTags) {
-          Integer notificationReceivedCount = 0;
-          notificationReceivedCount = gameBroadcastReceiver.getReceiveCount() - 1;
+          Integer  tag_val = 0;
+          JSONObject object = new JSONObject();
 
           logger.log(TAG, "retrieved data for receive : ");
           try {
-
-            EventQueue.pushEvent
-              (new gamethriveGotReceived
-               (""+(rTags.getInt("notification_received_count") +
-                 notificationReceivedCount)));
-
-          } catch (org.json.JSONException eJ){
+            tag_val = rTags.getInt("notification_received_count");
+          } catch (JSONException eJ){
             logger.log(TAG, "Receiving notification for the first time");
-            EventQueue.pushEvent(new gamethriveGotReceived(
-                                   notificationReceivedCount.toString()));
           } catch (Exception e) {
              e.printStackTrace();
+          }
+
+          try {
+            tag_val += receivedCount ;
+            object.put("notification_received_count",
+                             tag_val.toString());
+            sendTags(object); 
+          } catch (JSONException eJ){
+            logger.log(TAG, "error in json");
           }
         }
       });
@@ -179,20 +178,29 @@ public class GameThrivePlugin implements IPlugin {
   }
 
   //Get notification_opened_count, Other tags can be gotten in the same way
-  public void getNotificationOpenedCount(String params) {
+  public void getNotificationOpenedCount() {
     try {
       OneSignal.getTags(new GetTagsHandler() {
         @Override
         public void tagsAvailable(JSONObject rTags) {
           logger.log(TAG, "retrieved data for open : ");
+          Integer tag_val = 0 ;
+          opened_count += 1;  
           try {
-            EventQueue.pushEvent(new gamethriveGotOpened
-                                 (rTags.get("notification_opened_count").toString()));
-          } catch (org.json.JSONException eJ){
-            EventQueue.pushEvent(new gamethriveGotOpened("0"));
+            tag_val = rTags.getInt("notification_opened_count");
+          } catch (JSONException eJ){
             logger.log(TAG, "Opening notification for the first time");
           } catch (Exception e) {
              e.printStackTrace();
+          }
+
+          try {
+            gameThrive_data.put("notification_opened_count", opened_count);
+            tag_val += opened_count;
+            data_to_send.put("notification_opened_count", tag_val.toString());
+            opened_count = 0; 
+          } catch (JSONException eJ){
+            logger.log(TAG, "Error in json");
           }
         }
       });
@@ -211,7 +219,7 @@ public class GameThrivePlugin implements IPlugin {
   }
 
   public void onNewIntent(Intent intent) {
-    checkNotification();
+    //checkNotification();
   }
 
   public void setInstallReferrer(String referrer) {
@@ -236,19 +244,27 @@ public class GameThrivePlugin implements IPlugin {
     public void notificationOpened
     (String message, JSONObject additionalData, boolean isActive) {
 
-      Date current_on_time = new Date();
-      long opened_on_time = current_on_time.getTime();  
+      Date current_time = new Date();
+      long opened_on_time = current_time.getTime();  
       String segment_id = null; 
-      String title = null; 
+      String title = null;
       try {
-        segment_id = additionalData.getString("segment_id");
         title = additionalData.getString("title");
+        segment_id = additionalData.getString("segment_name");
       } catch (JSONException e) {
         logger.log(TAG, "Error in jsondata");
       }
-        
-      EventQueue.pushEvent(new gamethriveNotificationOpened
-                           (opened_on_time, segment_id, title, message));
+
+      try {
+        gameThrive_data.put("notification_segment_name", segment_id);   
+        gameThrive_data.put("notification_title", title);   
+        gameThrive_data.put("notification_message", message);   
+        gameThrive_data.put("last_notification_opened_on", opened_on_time);   
+        data_to_send.put("last_notification_opened_on", current_time.toString()); 
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }  
+      getNotificationOpenedCount(); 
     }
   }
 }

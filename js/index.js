@@ -33,75 +33,21 @@ exports = new (Class(function() {
       }
     };
 
-  NATIVE.events.registerHandler('gamethriveNotificationOpened', function(v) {
-    if (!v.failed) {
-      var tags = {}, date;
-      date = new Date(v.notification_opened_on).toUTCString(); 
-      tags.last_notification_opened_on = date;
-      data.last_notification_opened_on =  v.notification_opened_on;
-      data.last_notification_segment_id =  v.segment_id;
-      data.last_notification_title =  v.title;
-      data.last_notification_message =  v.message;
-
-      that.getNotificationOpenedCount();
-      pluginSend('sendTags', tags);
-    }
-  });
-
   NATIVE.events.registerHandler('gamethriveNotificationReceived', function(v) {
     if (!v.failed) {
-      var tags = {}, date, received_on;
-      date = new Date(v.notification_received_on).toUTCString(); 
-      tags.last_notification_received_on =  date;
-      data.last_notification_received_on = v.notification_received_on;
-      that.getNotificationReceivedCount();
-      pluginSend('sendTags', tags);
+      var received_data;
+      received_data = JSON.parse(v.notification_data);
+      logger.log("{gamethrive} data at js", JSON.stringify(v), typeof(received_data));
+      invokeCallbacks(cb, received_data);
     }
   });
-
-  NATIVE.events.registerHandler('gamethriveGotOpened', function(v) {
-    if(!v.failed) {
-      var tags = {};
-      tags.notification_opened_count =
-        parseInt(v.notification_Open_Count,10) + 1;
-      data.notification_opened_count = tags.notification_opened_count;
-      if(!flag){
-        invokeCallbacks(cb, data);
-      }
-      flag = 0;
-      pluginSend('sendTags', tags);
-    }
-  });
-
-  NATIVE.events.registerHandler('gamethriveGotReceived', function(v) {
-    if(!v.failed) {
-      var tags = {};
-      tags.notification_received_count =
-        parseInt(v.notification_Receive_Count,10) + 1;
-      data.notification_received_count = tags.notification_received_count;
-      invokeCallbacks(cb, data);
-      pluginSend('sendTags', tags);
-    }
-  });
-
 
   // SendTags
   this.sendTags = function (obj, next) {
     if(cb.length < 1) {
       cb.push(next); 
     }
-    pluginSend('sendTags', obj);
-  };
-
-  //GetTag(NotificationOpenedCount)
-  this.getNotificationOpenedCount = function () {
-    pluginSend('getNotificationOpenedCount', {});
-  };
-
-  //GetTag(NotificationReceivedCount)
-  this.getNotificationReceivedCount = function () {
-    flag = 1;
-    pluginSend('getNotificationReceivedCount', {});
+    pluginSend('checkNotification', obj);
   };
 
 }))();
