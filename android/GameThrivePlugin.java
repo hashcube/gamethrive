@@ -115,7 +115,7 @@ public class GameThrivePlugin implements IPlugin {
       time_stamp = notificationReceived.getTime();
       notificationReceivedCount = gameBroadcastReceiver.getReceiveCount();
       try {
-        gameThrive_data.put("notification_received_on", time_stamp); 
+        gameThrive_data.put("last_notification_received_on", time_stamp); 
         data_to_send.put("last_notification_received_on", 
                                     notificationReceived.toString());
         gameThrive_data.put("notification_received_count",
