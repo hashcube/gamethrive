@@ -37,17 +37,20 @@ exports = new (Class(function() {
     if (!v.failed) {
       var received_data;
       received_data = JSON.parse(v.notification_data);
-      logger.log("{gamethrive} data at js", JSON.stringify(v), typeof(received_data));
+      logger.log("{gamethrive} data at js", JSON.stringify(v));
       invokeCallbacks(cb, received_data);
     }
   });
 
   // SendTags
-  this.sendTags = function (obj, next) {
+  this.sendTags = function (obj) {
+    pluginSend('checkNotification', obj);
+  };
+
+  this.registerCallback = function (next) {
     if(cb.length < 1) {
       cb.push(next); 
     }
-    pluginSend('checkNotification', obj);
   };
 
 }))();

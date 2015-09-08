@@ -124,9 +124,9 @@ public class GameThrivePlugin implements IPlugin {
         e.printStackTrace();
       }
       getNotificationReceivedCount(notificationReceivedCount);
+      sendTags(data_to_send);
       EventQueue.pushEvent(new gamethriveNotificationReceived(
                            gameThrive_data.toString()));
-      sendTags(data_to_send);
       data_to_send = new JSONObject();
       gameThrive_data = new JSONObject();
       //Event
@@ -185,7 +185,7 @@ public class GameThrivePlugin implements IPlugin {
         public void tagsAvailable(JSONObject rTags) {
           logger.log(TAG, "retrieved data for open : ");
           Integer tag_val = 0 ;
-          opened_count += 1;  
+          JSONObject object = new JSONObject();
           try {
             tag_val = rTags.getInt("notification_opened_count");
           } catch (JSONException eJ){
@@ -195,10 +195,10 @@ public class GameThrivePlugin implements IPlugin {
           }
 
           try {
-            gameThrive_data.put("notification_opened_count", opened_count);
             tag_val += opened_count;
-            data_to_send.put("notification_opened_count", tag_val.toString());
+            object.put("notification_opened_count", tag_val.toString());
             opened_count = 0; 
+            sendTags(object); 
           } catch (JSONException eJ){
             logger.log(TAG, "Error in json");
           }
@@ -248,6 +248,7 @@ public class GameThrivePlugin implements IPlugin {
       long opened_on_time = current_time.getTime();  
       String segment_id = null; 
       String title = null;
+      opened_count += 1;  
       try {
         title = additionalData.getString("title");
         segment_id = additionalData.getString("segment_name");
@@ -260,6 +261,7 @@ public class GameThrivePlugin implements IPlugin {
         gameThrive_data.put("notification_title", title);   
         gameThrive_data.put("notification_message", message);   
         gameThrive_data.put("last_notification_opened_on", opened_on_time);   
+        gameThrive_data.put("notification_opened_count", opened_count);
         data_to_send.put("last_notification_opened_on", current_time.toString()); 
       } catch (JSONException e) {
         e.printStackTrace();
