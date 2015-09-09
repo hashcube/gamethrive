@@ -90,7 +90,6 @@ public class GameThrivePlugin implements IPlugin {
 
   @Override
   public void onResume() {
-    //checkNotification();
   }
 
   public void sendUserTags(String jsonData) {
