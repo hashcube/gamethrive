@@ -90,23 +90,24 @@ public class GameThrivePlugin implements IPlugin {
 
   @Override
   public void onResume() {
-    checkNotification(null);
+    //checkNotification();
   }
 
-  public void checkNotification(String jsonData) {
+  public void sendUserTags(String jsonData) {
+    try {
+      JSONObject object = new JSONObject(jsonData);
+      sendTags(object);
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void checkNotification() {
     // super.onResume();
     Date notificationReceived = null;
     long time_stamp = -1; 
     Integer notificationReceivedCount = 0;
     
-    if(jsonData != null) {
-      try {
-        JSONObject object = new JSONObject(jsonData);
-        sendTags(object);
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
     //OneSignal.onResumed();
     notificationReceived = gameBroadcastReceiver.getReceiveDate();
     
@@ -217,7 +218,7 @@ public class GameThrivePlugin implements IPlugin {
   }
 
   public void onNewIntent(Intent intent) {
-    //checkNotification();
+    checkNotification();
   }
 
   public void setInstallReferrer(String referrer) {

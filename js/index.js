@@ -44,10 +44,11 @@ exports = new (Class(function() {
 
   // SendTags
   this.sendTags = function (obj) {
-    pluginSend('checkNotification', obj);
+    pluginSend('sendUserTags', obj);
   };
 
   this.registerCallback = function (next) {
+    logger.log("{gamethrive} at callback");
     if(cb.length < 1) {
       cb.push(next); 
     }
