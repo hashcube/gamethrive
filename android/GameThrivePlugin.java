@@ -129,8 +129,6 @@ public class GameThrivePlugin implements IPlugin {
                            gameThrive_data.toString()));
       data_to_send = new JSONObject();
       gameThrive_data = new JSONObject();
-      //Event
-      //reset objects both
     }
   }
 
