@@ -69,6 +69,7 @@ public class GameThrivePlugin implements IPlugin {
         }
 
         logger.log(g_Project_Number, appID, TAG);
+	logger.log(activity.getIntent().getExtras(), TAG);
 
         if (appID != null && g_Project_Number != null) {
           OneSignal.init(activity, g_Project_Number, appID, new gameNotificationOpenedHandler());
@@ -90,6 +91,7 @@ public class GameThrivePlugin implements IPlugin {
 
   @Override
   public void onResume() {
+    checkNotification();
   }
 
   public void sendUserTags(String jsonData) {
@@ -106,6 +108,7 @@ public class GameThrivePlugin implements IPlugin {
     Date notificationReceived = null;
     long time_stamp = -1; 
     Integer notificationReceivedCount = 0;
+    String received_data = null;
     
     //OneSignal.onResumed();
     notificationReceived = gameBroadcastReceiver.getReceiveDate();
@@ -119,7 +122,22 @@ public class GameThrivePlugin implements IPlugin {
         data_to_send.put("last_notification_received_on", 
                                     notificationReceived.toString());
         gameThrive_data.put("notification_received_count",
-                            notificationReceivedCount); 
+                            notificationReceivedCount);
+        if(!gameThrive_data.has("notification_segment_name")) {
+          received_data = gameBroadcastReceiver.getReceiveData("segment_name");
+          gameThrive_data.put("notification_segment_name", received_data); 
+        } 
+         
+        if(!gameThrive_data.has("notification_title")) {
+          received_data = gameBroadcastReceiver.getReceiveData("title");
+          gameThrive_data.put("notification_title", received_data); 
+        } 
+         
+        if(!gameThrive_data.has("notification_message")) {
+          received_data = gameBroadcastReceiver.getReceiveData("message");
+          gameThrive_data.put("notification_message", received_data); 
+        } 
+         
       } catch (Exception e) {
         e.printStackTrace();
       }
@@ -217,7 +235,6 @@ public class GameThrivePlugin implements IPlugin {
   }
 
   public void onNewIntent(Intent intent) {
-    checkNotification();
   }
 
   public void setInstallReferrer(String referrer) {
