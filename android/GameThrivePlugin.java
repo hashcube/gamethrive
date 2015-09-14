@@ -113,35 +113,40 @@ public class GameThrivePlugin implements IPlugin {
     //OneSignal.onResumed();
     notificationReceived = gameBroadcastReceiver.getReceiveDate();
     
-    if(notificationReceived != null)
+    if(notificationReceived != null ||
+       gameThrive_data.has("last_notification_opened_on"))
     {
-      time_stamp = notificationReceived.getTime();
-      notificationReceivedCount = gameBroadcastReceiver.getReceiveCount();
-      try {
-        gameThrive_data.put("last_notification_received_on", time_stamp); 
-        data_to_send.put("last_notification_received_on", 
-                                    notificationReceived.toString());
-        gameThrive_data.put("notification_received_count",
-                            notificationReceivedCount);
-        if(!gameThrive_data.has("notification_segment_name")) {
-          received_data = gameBroadcastReceiver.getReceiveData("segment_name");
-          gameThrive_data.put("notification_segment_name", received_data); 
-        } 
-         
-        if(!gameThrive_data.has("notification_title")) {
-          received_data = gameBroadcastReceiver.getReceiveData("title");
-          gameThrive_data.put("notification_title", received_data); 
-        } 
-         
-        if(!gameThrive_data.has("notification_message")) {
-          received_data = gameBroadcastReceiver.getReceiveData("message");
-          gameThrive_data.put("notification_message", received_data); 
-        } 
-         
-      } catch (Exception e) {
-        e.printStackTrace();
+      if(notificationReceived != null) 
+      {
+        time_stamp = notificationReceived.getTime();
+        notificationReceivedCount = gameBroadcastReceiver.getReceiveCount();
+        try {
+          gameThrive_data.put("last_notification_received_on", time_stamp); 
+          data_to_send.put("last_notification_received_on", 
+                                      notificationReceived.toString());
+          gameThrive_data.put("notification_received_count",
+                              notificationReceivedCount);
+           
+          if(!gameThrive_data.has("notification_segment_name")) {
+            received_data = gameBroadcastReceiver.getReceiveData("segment_name");
+            gameThrive_data.put("notification_segment_name", received_data); 
+          } 
+           
+          if(!gameThrive_data.has("notification_title")) {
+            received_data = gameBroadcastReceiver.getReceiveData("title");
+            gameThrive_data.put("notification_title", received_data); 
+          } 
+           
+          if(!gameThrive_data.has("notification_message")) {
+            received_data = gameBroadcastReceiver.getReceiveData("message");
+            gameThrive_data.put("notification_message", received_data); 
+          } 
+           
+        } catch (Exception e) {
+          e.printStackTrace();
+        }
+        getNotificationReceivedCount(notificationReceivedCount);
       }
-      getNotificationReceivedCount(notificationReceivedCount);
       sendTags(data_to_send);
       EventQueue.pushEvent(new gamethriveNotificationReceived(
                            gameThrive_data.toString()));
