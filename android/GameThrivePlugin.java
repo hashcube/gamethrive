@@ -69,7 +69,6 @@ public class GameThrivePlugin implements IPlugin {
         }
 
         logger.log(g_Project_Number, appID, TAG);
-	logger.log(activity.getIntent().getExtras(), TAG);
 
         if (appID != null && g_Project_Number != null) {
           OneSignal.init(activity, g_Project_Number, appID, new gameNotificationOpenedHandler());
