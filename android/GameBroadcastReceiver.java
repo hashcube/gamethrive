@@ -22,11 +22,12 @@ public class GameBroadcastReceiver extends BroadcastReceiver {
   public void onReceive(Context context, Intent intent) {
     received_on_time = new Date();
     received_count++;
-    title = intent.getExtras().getString("title");
-    message = intent.getExtras().getString("alert");
+    Bundle data = intent.getExtras(); 
+    title = data.getString("title");
+    message = data.getString("alert");
     logger.log("Notification received on : ", received_on_time.toString(), "{{GameThrive}}");
     try {
-      JSONObject customJSON = new JSONObject(intent.getExtras().getString("custom"));
+      JSONObject customJSON = new JSONObject(data.getString("custom"));
       if (customJSON.has("a")) {
         JSONObject additionalData = customJSON.getJSONObject("a");
         segment_name = additionalData.getString("segment_name");
