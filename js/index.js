@@ -11,61 +11,47 @@ function pluginOn(evt, next) {
 
 exports = new (Class(function() {
 
-  var that = this;
-
-  NATIVE.events.registerHandler('gamethriveNotificationOpened', function(v) {
-    if (!v.failed) {
-      var tags = {};
-      tags.last_notification_opened_on =  v.notification_opened_on;
-
-      that.getNotificationOpenedCount();
-      pluginSend('sendTags', tags);
-    }
-  });
+  var that = this,
+    cb = [],
+    flag = 0,
+    data = {},
+    invokeCallbacks = function (list) {
+      // Pop off the first argument and keep the rest
+      var args = Array.prototype.splice.call(arguments, 1),
+        len = list.length,
+        i, next;
+    
+      // For each callback,
+      for (i = 0; i < len; ++i) {
+        next = list[i];
+    
+        // If callback was actually specified,
+        if (next) {
+          // Run it
+          next.apply(null, args);
+        }
+      }
+    };
 
   NATIVE.events.registerHandler('gamethriveNotificationReceived', function(v) {
     if (!v.failed) {
-      var tags = {};
-      tags.last_notification_received_on =  v.notification_received_on;
-
-      that.getNotificationReceivedCount();
-      pluginSend('sendTags', tags);
+      var received_data;
+      received_data = JSON.parse(v.notification_data);
+      logger.log("{gamethrive} data at js", JSON.stringify(v));
+      invokeCallbacks(cb, received_data);
     }
   });
-
-  NATIVE.events.registerHandler('gamethriveGotOpened', function(v) {
-    if(!v.failed) {
-      var tags = {};
-      tags.notification_opened_count =
-        parseInt(v.notification_Open_Count,10) + 1;
-
-      pluginSend('sendTags', tags);
-    }
-  });
-
-  NATIVE.events.registerHandler('gamethriveGotReceived', function(v) {
-    if(!v.failed) {
-      var tags = {};
-      tags.notification_received_count =
-        parseInt(v.notification_Receive_Count,10) + 1;
-
-      pluginSend('sendTags', tags);
-    }
-  });
-
 
   // SendTags
   this.sendTags = function (obj) {
-    pluginSend('sendTags', obj);
+    pluginSend('sendUserTags', obj);
   };
 
-  //GetTag(NotificationOpenedCount)
-  this.getNotificationOpenedCount = function () {
-    pluginSend('getNotificationOpenedCount', {});
+  this.registerCallback = function (next) {
+    logger.log("{gamethrive} at callback");
+    if(cb.length < 1) {
+      cb.push(next); 
+    }
   };
 
-  //GetTag(NotificationReceivedCount)
-  this.getNotificationReceivedCount = function () {
-    pluginSend('getNotificationReceivedCount', {});
-  };
 }))();
