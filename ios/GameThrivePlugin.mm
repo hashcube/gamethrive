@@ -32,7 +32,7 @@
 - (void) initializeWithManifest:(NSDictionary *)manifest appDelegate:(TeaLeafAppDelegate *)appDelegate {
     @try {
         //ONLY DURING DEBUG
-        //[OneSignal setLogLevel: ONE_S_LL_VERBOSE visualLevel: ONE_S_LL_VERBOSE];
+        //[OneSignal setLogLevel: ONE_S_LL_VERBOSE visualLevel: ONE_S_LL_NONE];
 
         NSDictionary *ios = [manifest valueForKey:@"ios"];
         NSString *gamethriveAppId = [ios valueForKey:@"gameThriveAppID"];
@@ -50,7 +50,7 @@
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
         NSInteger badge_count = [UIApplication sharedApplication].applicationIconBadgeNumber;
         [defaults setInteger:badge_count forKey:@"badge_count"];
-        [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
+
     }
     @catch (NSException *exception) {
         NSLog(@"{gamethrive} Failed to initialize with exception: %@", exception);
@@ -89,8 +89,6 @@
         badge_count += saved_badge_count;
     }
 
-    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
-
     [defaults setInteger:counter forKey:@"launch_count"];
     [defaults setInteger:0 forKey:@"badge_count"];
     [defaults synchronize];
@@ -105,11 +103,14 @@
     NSString* segment_name = [NSString stringWithFormat: @"%@",
                               [[[userInfo objectForKey:@"custom"] objectForKey:@"a"] objectForKey:@"segment_name"]];
     NSString* message = [NSString stringWithFormat: @"%@",
-                         [[userInfo objectForKey:@"aps"] objectForKey:@"alert"]];
+                         [[[userInfo objectForKey:@"aps"] objectForKey:@"alert"] objectForKey:@"body"]];
+    NSString* title = [NSString stringWithFormat: @"%@",
+                         [[[userInfo objectForKey:@"aps"] objectForKey:@"alert"] objectForKey:@"title"]];
 
     // sending number of received messages from the last time
     NSDictionary* notification_data = [NSDictionary dictionaryWithObjectsAndKeys:
                                        segment_name, @"notification_segment_name",
+                                       title, @"notification_title",
                                        message, @"notification_message",
                                        timestamp, @"last_notification_opened_on",
                                        [NSNumber numberWithInteger:1], @"notification_opened_count",
