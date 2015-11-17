@@ -19,7 +19,7 @@ var path = require("path"),
     }
   };
 
-exports.onAfterBuild = function (devkitAPI, app, config, cb) {
+exports.onBeforeBuild = function (devkitAPI, app, config, cb) {
   'use strict';
 
   if (config.target === 'native-android') {
