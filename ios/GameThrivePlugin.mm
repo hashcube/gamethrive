@@ -104,9 +104,9 @@
     }
 
     NSString* message = [NSString stringWithFormat: @"%@",
-                         [[userInfo objectForKey:@"aps"] objectForKey:@"alert"]];
+                         [[[userInfo objectForKey:@"aps"] objectForKey:@"alert"] objectForKey:@"body"]];
     NSString* title = [NSString stringWithFormat: @"%@",
-                         [[userInfo objectForKey:@"aps"] objectForKey:@"alert"]];
+                         [[[userInfo objectForKey:@"aps"] objectForKey:@"alert"] objectForKey:@"title"]];
 
     // sending number of received messages from the last time
     NSDictionary* notification_data = [NSDictionary dictionaryWithObjectsAndKeys:
