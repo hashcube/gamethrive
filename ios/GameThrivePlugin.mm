@@ -82,9 +82,7 @@
 
     NSInteger badge_count = [[[userInfo objectForKey:@"aps"] objectForKey:@"badge"] intValue];
     NSInteger saved_badge_count = [defaults integerForKey:@"badge_count"];
-    if(saved_badge_count) {
-        badge_count += saved_badge_count;
-    }
+    badge_count += saved_badge_count;
 
     [defaults setInteger:counter forKey:@"launch_count"];
     [defaults setInteger:badge_count forKey:@"badge_count"];
