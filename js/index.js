@@ -20,11 +20,11 @@ exports = new (Class(function() {
       var args = Array.prototype.splice.call(arguments, 1),
         len = list.length,
         i, next;
-    
+
       // For each callback,
       for (i = 0; i < len; ++i) {
         next = list[i];
-    
+
         // If callback was actually specified,
         if (next) {
           // Run it

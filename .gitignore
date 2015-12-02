@@ -2,4 +2,6 @@
 *.swp
 .#*
 *#
+.version
+.DS_Store
 node_modules
