@@ -48,9 +48,6 @@
         NSLOG(@"{gamethrive} Initialized");
 
         NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-        NSInteger badge_count = [UIApplication sharedApplication].applicationIconBadgeNumber;
-        [defaults setInteger:badge_count forKey:@"badge_count"];
-
     }
     @catch (NSException *exception) {
         NSLog(@"{gamethrive} Failed to initialize with exception: %@", exception);
@@ -90,22 +87,26 @@
     }
 
     [defaults setInteger:counter forKey:@"launch_count"];
-    [defaults setInteger:0 forKey:@"badge_count"];
+    [defaults setInteger:badge_count forKey:@"badge_count"];
     [defaults synchronize];
 
     NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
                           [NSNumber numberWithInteger:counter], @"notification_opened_count",
-                          [NSNumber numberWithInteger:counter + badge_count], @"notification_received_count",
+                          [NSNumber numberWithInteger:badge_count], @"notification_received_count",
                           formattedDateString, @"last_notification_received_on",
                           formattedDateString, @"last_notification_opened_on", nil];
     [self.oneSignal sendTags: dict];
 
     NSString* segment_name = [NSString stringWithFormat: @"%@",
                               [[[userInfo objectForKey:@"custom"] objectForKey:@"a"] objectForKey:@"segment_name"]];
+    if(segment_name == @"(null)" || segment_name != nil) {
+        segment_name = @"unknown";
+    }
+
     NSString* message = [NSString stringWithFormat: @"%@",
-                         [[[userInfo objectForKey:@"aps"] objectForKey:@"alert"] objectForKey:@"body"]];
+                         [[userInfo objectForKey:@"aps"] objectForKey:@"alert"]];
     NSString* title = [NSString stringWithFormat: @"%@",
-                         [[[userInfo objectForKey:@"aps"] objectForKey:@"alert"] objectForKey:@"title"]];
+                         [[userInfo objectForKey:@"aps"] objectForKey:@"alert"]];
 
     // sending number of received messages from the last time
     NSDictionary* notification_data = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -113,7 +114,8 @@
                                        title, @"notification_title",
                                        message, @"notification_message",
                                        timestamp, @"last_notification_opened_on",
-                                       [NSNumber numberWithInteger:1], @"notification_opened_count",
+                                       [NSNumber numberWithInteger:counter],
+                                            @"notification_opened_count",
                                        timestamp, @"last_notification_received_on",
                                        [NSNumber numberWithInteger:badge_count], @"notification_received_count", nil];
 
