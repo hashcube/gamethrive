@@ -7,6 +7,7 @@
 @property (nonatomic, retain) NSData *deviceToken;
 @property (nonatomic) BOOL initDone;
 @property (nonatomic, retain) NSMutableDictionary *tags;
+@property (nonatomic, retain) NSDictionary *notification_data;
 
 @end
 
@@ -31,6 +32,7 @@
 
 - (void) initializeWithManifest:(NSDictionary *)manifest appDelegate:(TeaLeafAppDelegate *)appDelegate {
     @try {
+
         //ONLY DURING DEBUG
         //[OneSignal setLogLevel: ONE_S_LL_VERBOSE visualLevel: ONE_S_LL_NONE];
 
@@ -46,8 +48,6 @@
 
         self.initDone = YES;
         NSLOG(@"{gamethrive} Initialized");
-
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     }
     @catch (NSException *exception) {
         NSLog(@"{gamethrive} Failed to initialize with exception: %@", exception);
@@ -97,7 +97,7 @@
 
     NSString* segment_name = [NSString stringWithFormat: @"%@",
                               [[[userInfo objectForKey:@"custom"] objectForKey:@"a"] objectForKey:@"segment_name"]];
-    if(segment_name == @"(null)" || segment_name != nil) {
+    if([segment_name  isEqual: @"(null)"] || segment_name != nil) {
         segment_name = @"unknown";
     }
 
@@ -107,19 +107,18 @@
                          [[[userInfo objectForKey:@"aps"] objectForKey:@"alert"] objectForKey:@"title"]];
 
     // sending number of received messages from the last time
-    NSDictionary* notification_data = [NSDictionary dictionaryWithObjectsAndKeys:
-                                       segment_name, @"notification_segment_name",
-                                       title, @"notification_title",
-                                       message, @"notification_message",
-                                       timestamp, @"last_notification_opened_on",
-                                       [NSNumber numberWithInteger:counter],
-                                            @"notification_opened_count",
-                                       timestamp, @"last_notification_received_on",
-                                       [NSNumber numberWithInteger:badge_count], @"notification_received_count", nil];
-
+    self.notification_data = [NSDictionary dictionaryWithObjectsAndKeys:
+                        segment_name, @"notification_segment_name",
+                        title, @"notification_title",
+                        message, @"notification_message",
+                        timestamp, @"last_notification_opened_on",
+                        [NSNumber numberWithInteger:counter],
+                             @"notification_opened_count",
+                        timestamp, @"last_notification_received_on",
+                        [NSNumber numberWithInteger:badge_count], @"notification_received_count", nil];
     [[PluginManager get] dispatchJSEvent:[NSDictionary dictionaryWithObjectsAndKeys:
                                           @"gamethriveNotificationReceived", @"name",
-                                          [NSString stringWithFormat: @"%@",notification_data], @"notification_data",
+                                          [NSString stringWithFormat: @"%@",self.notification_data], @"notification_data",
                                           NO, @"failed", nil]];
 }
 
@@ -134,6 +133,11 @@
         NSLOG(@"tags: %@", self.tags);
         [self.tags removeAllObjects];
     }
+}
+
+- (void) getNotificationData:( NSDictionary *)tags withRequestId:(NSNumber *)requestId  {
+    [[PluginManager get] dispatchJSResponse:self.notification_data withError:nil andRequestId:requestId];
+    self.notification_data = nil;
 }
 
 @end
