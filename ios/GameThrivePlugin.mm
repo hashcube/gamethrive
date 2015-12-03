@@ -47,7 +47,6 @@
         self.initDone = YES;
         NSLOG(@"{gamethrive} Initialized");
 
-        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
     }
     @catch (NSException *exception) {
         NSLog(@"{gamethrive} Failed to initialize with exception: %@", exception);
@@ -69,6 +68,7 @@
 }
 
 - (void) didReceiveRemoteNotification:(NSDictionary *)userInfo application:(UIApplication *)app {
+
     //tracking last launch time
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     [dateFormat setDateFormat: @"yyyy-MM-dd HH:mm:ss zzz"];
@@ -97,7 +97,7 @@
 
     NSString* segment_name = [NSString stringWithFormat: @"%@",
                               [[[userInfo objectForKey:@"custom"] objectForKey:@"a"] objectForKey:@"segment_name"]];
-    if(segment_name == @"(null)" || segment_name != nil) {
+    if([segment_name isEqualToString:@"(null)"] || segment_name == nil) {
         segment_name = @"unknown";
     }
 
@@ -112,14 +112,13 @@
                                        title, @"notification_title",
                                        message, @"notification_message",
                                        timestamp, @"last_notification_opened_on",
-                                       [NSNumber numberWithInteger:counter],
-                                            @"notification_opened_count",
+                                       [NSNumber numberWithInteger:counter], @"notification_opened_count",
                                        timestamp, @"last_notification_received_on",
                                        [NSNumber numberWithInteger:badge_count], @"notification_received_count", nil];
 
     [[PluginManager get] dispatchJSEvent:[NSDictionary dictionaryWithObjectsAndKeys:
                                           @"gamethriveNotificationReceived", @"name",
-                                          [NSString stringWithFormat: @"%@",notification_data], @"notification_data",
+                                          notification_data, @"notification_data",
                                           NO, @"failed", nil]];
 }
 
