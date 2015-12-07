@@ -49,8 +49,16 @@ exports = new (Class(function() {
   this.registerCallback = function (next) {
     logger.log("{gamethrive} at callback");
     if(cb.length < 1) {
-      cb.push(next); 
+      cb.push(next);
     }
+  };
+
+  this.getNotificationData = function (cb) {
+    NATIVE.plugins.sendRequest("GameThrivePlugin", "getNotificationData", {} , function (err, res) {
+        if (!err) {
+          cb(res);
+        }
+    });
   };
 
 }))();
