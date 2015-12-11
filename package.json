@@ -1,6 +1,6 @@
 {
   "name": "gamethrive",
-  "version": "1.10.5",
+  "version": "1.10.0",
   "devkit": {
     "clientPaths": {
       "gamethrive": "js"
