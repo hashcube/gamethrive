@@ -1,13 +1,12 @@
 {
   "copyFiles": [
    "GameThrivePlugin.java",
-    "GameBroadcastReceiver.java"
+   "GameBroadcastReceiver.java"
   ],
   "libraries": [
   ],
   "jars": [
-    "libs/OneSignalSDK.jar",
-    "libs/android-support-v4.jar"
+    "libs/OneSignalSDK.jar"
   ],
   "injectionXML": "manifest.xml",
   "injectionXSL": "manifest.xsl"
