@@ -6,7 +6,8 @@
   "libraries": [
   ],
   "jars": [
-    "libs/OneSignalSDK.jar"
+    "libs/OneSignalSDK.jar",
+    "libs/google-gcm.jar"
   ],
   "injectionXML": "manifest.xml",
   "injectionXSL": "manifest.xsl"
