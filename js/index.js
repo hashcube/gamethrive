@@ -36,8 +36,9 @@ exports = new (Class(function() {
   NATIVE.events.registerHandler('gamethriveNotificationReceived', function(v) {
     if (!v.failed) {
       var received_data;
+      received_data = JSON.parse(v.notification_data);
       logger.log("{gamethrive} data at js", JSON.stringify(v));
-      invokeCallbacks(cb, v.notification_data);
+      invokeCallbacks(cb, received_data);
     }
   });
 
