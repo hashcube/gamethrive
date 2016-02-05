@@ -70,6 +70,8 @@
 
 - (void) didReceiveRemoteNotification:(NSDictionary *)userInfo application:(UIApplication *)app {
 
+    // Triggered when user opens app from notification receieved
+    // Hence notification opened count and receievd count will increment by 1
     //tracking last launch time
     NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
     [dateFormat setDateFormat: @"yyyy-MM-dd HH:mm:ss zzz"];
@@ -81,7 +83,7 @@
     NSInteger counter = [defaults integerForKey:@"launch_count"];
     counter += 1;
 
-    NSInteger badge_count = [[[userInfo objectForKey:@"aps"] objectForKey:@"badge"] intValue];
+    NSInteger badge_count = [[[userInfo objectForKey:@"aps"] objectForKey:@"badge"] intValue] + 1;
     NSInteger saved_badge_count = [defaults integerForKey:@"badge_count"];
     badge_count += saved_badge_count;
 
@@ -107,6 +109,10 @@
                          [[[userInfo objectForKey:@"aps"] objectForKey:@"alert"] objectForKey:@"body"]];
     NSString* title = [NSString stringWithFormat: @"%@",
                          [[[userInfo objectForKey:@"aps"] objectForKey:@"alert"] objectForKey:@"title"]];
+
+    // Reset counter and badge_count to 1
+    counter = 1;
+    badge_count = 1;
 
     // sending number of received messages from the last time
     self.notification_data = [NSDictionary dictionaryWithObjectsAndKeys:
