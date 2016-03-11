@@ -88,9 +88,15 @@ public class GameThrivePlugin implements IPlugin {
     OneSignal.onPaused();
   }
 
+  public void onRenderPause() {
+  }
+
   @Override
   public void onResume() {
     checkNotification();
+  }
+
+  public void onRenderResume() {
   }
 
   public void sendUserTags(String jsonData) {
@@ -230,6 +236,9 @@ public class GameThrivePlugin implements IPlugin {
   }
 
   public void onStart() {
+  }
+
+  public void onFirstRun() {
   }
 
   public void onStop() {
