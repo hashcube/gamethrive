@@ -24,7 +24,6 @@ exports = new (Class(function() {
       // For each callback,
       for (i = 0; i < len; ++i) {
         next = list[i];
-
         // If callback was actually specified,
         if (next) {
           // Run it
@@ -34,12 +33,21 @@ exports = new (Class(function() {
     };
 
   NATIVE.events.registerHandler('gamethriveNotificationReceived', function(v) {
+    var received_data;
+
     if (!v.failed) {
-      var received_data;
       received_data = JSON.parse(v.notification_data);
       logger.log("{gamethrive} data at js", JSON.stringify(v));
-      invokeCallbacks(cb, received_data);
+      invokeCallbacks(cb, received_data, "NotificationReceived");
     }
+  });
+
+  NATIVE.events.registerHandler('gamethriveNotificationOpened', function(v) {
+    var received_data;
+
+    received_data = JSON.parse(v.notification_data);
+    logger.log("{gamethrive} data at js", JSON.stringify(v));
+    invokeCallbacks(cb, received_data, "NotificationOpened");
   });
 
   // SendTags

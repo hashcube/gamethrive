@@ -49,6 +49,15 @@ public class GameThrivePlugin implements IPlugin {
     }
   }
 
+  public class gamethriveNotificationOpened extends com.tealeaf.event.Event {
+    String notification_data;
+
+    public gamethriveNotificationOpened(String notification_data) {
+      super("gamethriveNotificationOpened");
+      this.notification_data = notification_data;
+    }
+  }
+
   public void onCreateApplication(Context applicationContext) {
   }
 
@@ -290,6 +299,9 @@ public class GameThrivePlugin implements IPlugin {
         gameThrive_data.put("notification_message", message);   
         gameThrive_data.put("last_notification_opened_on", opened_on_time);   
         gameThrive_data.put("notification_opened_count", opened_count);
+        logger.log("{gamethrive}", "notification opened called");
+        EventQueue.pushEvent(new gamethriveNotificationOpened(
+                           gameThrive_data.toString()));
         data_to_send.put("last_notification_opened_on", current_time.toString()); 
       } catch (JSONException e) {
         e.printStackTrace();
