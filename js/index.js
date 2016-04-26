@@ -45,11 +45,9 @@ exports = new (Class(function() {
   NATIVE.events.registerHandler('gamethriveNotificationOpened', function(v) {
     var received_data;
 
-    if (!v.failed) {
-      received_data = JSON.parse(v.notification_data);
-      logger.log("{gamethrive} data at js", JSON.stringify(v));
-      invokeCallbacks(cb, received_data, "NotificationOpened");
-    }
+    received_data = JSON.parse(v.notification_data);
+    logger.log("{gamethrive} data at js", JSON.stringify(v));
+    invokeCallbacks(cb, received_data, "NotificationOpened");
   });
 
   // SendTags

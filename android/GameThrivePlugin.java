@@ -50,12 +50,10 @@ public class GameThrivePlugin implements IPlugin {
   }
 
   public class gamethriveNotificationOpened extends com.tealeaf.event.Event {
-    boolean failed;
     String notification_data;
 
     public gamethriveNotificationOpened(String notification_data) {
       super("gamethriveNotificationOpened");
-      this.failed = false;
       this.notification_data = notification_data;
     }
   }
