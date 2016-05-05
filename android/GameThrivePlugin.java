@@ -81,6 +81,7 @@ public class GameThrivePlugin implements IPlugin {
 
         if (appID != null && g_Project_Number != null) {
           OneSignal.init(activity, g_Project_Number, appID, new gameNotificationOpenedHandler());
+          OneSignal.enableNotificationsWhenActive(true);
           gameThrive = true;
           logger.log("Gamethrive instance created", TAG);
         }
@@ -103,6 +104,7 @@ public class GameThrivePlugin implements IPlugin {
   @Override
   public void onResume() {
     checkNotification();
+    OneSignal.onResumed();
   }
 
   public void onRenderResume() {
