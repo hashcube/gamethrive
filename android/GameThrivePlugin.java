@@ -79,7 +79,6 @@ public class GameThrivePlugin implements IPlugin {
 
         if (appID != null && g_Project_Number != null) {
           OneSignal.init(activity, g_Project_Number, appID, new gameNotificationOpenedHandler());
-          OneSignal.enableNotificationsWhenActive(true);
           gameThrive = true;
           logger.log("Gamethrive instance created", TAG);
         }
@@ -285,6 +284,7 @@ public class GameThrivePlugin implements IPlugin {
       long opened_on_time = current_time.getTime();  
       String segment_id = null; 
       String title = null;
+      int is_active = isActive ? 1: 0;
       opened_count += 1;  
       try {
         title = additionalData.getString("title");
@@ -299,6 +299,7 @@ public class GameThrivePlugin implements IPlugin {
         gameThrive_data.put("notification_message", message);   
         gameThrive_data.put("last_notification_opened_on", opened_on_time);   
         gameThrive_data.put("notification_opened_count", opened_count);
+        gameThrive_data.put("is_active", is_active);
         logger.log("{gamethrive}", "notification opened called");
         EventQueue.pushEvent(new gamethriveNotificationOpened(
                            gameThrive_data.toString()));
