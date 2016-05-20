@@ -30,13 +30,13 @@
     return self;
 }
 
-- (BOOL) didFinishLaunchingWithOptions:(NSDictionary*)launchOptions application:(UIApplication *)app {
+- (BOOL) didFinishLaunchingWithOptions:(NSDictionary *)launchOptions application:(UIApplication *)app {
     @try {
 
         //ONLY DURING DEBUG
         [OneSignal setLogLevel: ONE_S_LL_VERBOSE visualLevel: ONE_S_LL_NONE];
 
-        NSString *gamethriveAppId = @"";
+        NSString *gamethriveAppId = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"gameThriveAppID"];
         NSDictionary *launchOptions = launchOptions;
         //initialize here
         self.oneSignal = [[OneSignal alloc] initWithLaunchOptions:launchOptions
@@ -95,6 +95,7 @@
                                                                              [NSNumber numberWithInteger:counter],
                                                                              @"notification_opened_count",
                                                                              timestamp, @"last_notification_received_on",
+                                                                             [NSNumber numberWithBool:isActive], @"is_active",
                                                                              [NSNumber numberWithInteger:badge_count], @"notification_received_count", nil];
 
                                                    NSError *error;
