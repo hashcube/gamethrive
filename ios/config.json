@@ -9,5 +9,11 @@
   ],
   "additionalLinkerFlags": [
     "-ObjC"
-  ]
+  ],
+  "userDefined": [
+    "gameThriveAppID"
+  ],
+  "plist": {
+    "gameThriveAppID": "$(gamethrive.gameThriveAppID)"
+  }
 }

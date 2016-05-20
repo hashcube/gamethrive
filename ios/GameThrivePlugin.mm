@@ -30,28 +30,101 @@
     return self;
 }
 
-- (void) initializeWithManifest:(NSDictionary *)manifest appDelegate:(TeaLeafAppDelegate *)appDelegate {
+- (BOOL) didFinishLaunchingWithOptions:(NSDictionary *)launchOptions application:(UIApplication *)app {
     @try {
 
         //ONLY DURING DEBUG
-        //[OneSignal setLogLevel: ONE_S_LL_VERBOSE visualLevel: ONE_S_LL_NONE];
+        [OneSignal setLogLevel: ONE_S_LL_VERBOSE visualLevel: ONE_S_LL_NONE];
 
-        NSDictionary *ios = [manifest valueForKey:@"ios"];
-        NSString *gamethriveAppId = [ios valueForKey:@"gameThriveAppID"];
-        NSDictionary *launchOptions = appDelegate.startOptions;
-
+        NSString *gamethriveAppId = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"gameThriveAppID"];
+        NSDictionary *launchOptions = launchOptions;
         //initialize here
         self.oneSignal = [[OneSignal alloc] initWithLaunchOptions:launchOptions
                                                             appId: gamethriveAppId
-                                               handleNotification: NULL
-                                                     autoRegister:YES];
+                                               handleNotification: ^(NSString* message, NSDictionary* additionalData, BOOL isActive) {
+                                                   NSLog(@"{gamethrive}Notification opened:\nMessage: %@", message);
+                                                   // Triggered when user opens app from notification receieved
+                                                   // Hence notification opened count and receievd count will increment by 1
+                                                   //tracking last launch time
+                                                   NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
+                                                   [dateFormat setDateFormat: @"yyyy-MM-dd HH:mm:ss zzz"];
+                                                   NSString *formattedDateString = [dateFormat stringFromDate:[NSDate date]];
+                                                   NSNumber* timestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970] * 1000] ;
 
+                                                   // tracking number of launches because of notification
+                                                   NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+                                                   NSInteger counter = [defaults integerForKey:@"launch_count"];
+                                                   counter += 1;
+
+                                                   NSInteger badge_count = [[additionalData objectForKey:@"badge"] intValue] + 1;
+                                                   NSInteger saved_badge_count = [defaults integerForKey:@"badge_count"];
+                                                   badge_count += saved_badge_count;
+
+                                                   [defaults setInteger:counter forKey:@"launch_count"];
+                                                   [defaults setInteger:badge_count forKey:@"badge_count"];
+                                                   [defaults synchronize];
+
+                                                   NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
+                                                                         [NSNumber numberWithInteger:counter], @"notification_opened_count",
+                                                                         [NSNumber numberWithInteger:badge_count], @"notification_received_count",
+                                                                         formattedDateString, @"last_notification_received_on",
+                                                                         formattedDateString, @"last_notification_opened_on", nil];
+                                                   [self.oneSignal sendTags: dict];
+
+                                                   NSString* segment_name = [NSString stringWithFormat: @"%@",
+                                                                             [additionalData objectForKey:@"segment_name"]];
+
+                                                   if([segment_name isEqualToString:@"(null)"] || segment_name == nil) {
+                                                       segment_name = @"unknown";
+                                                   }
+
+                                                   //NSString* message = [NSString stringWithFormat: @"%@", message];
+                                                   NSString* title = [NSString stringWithFormat: @"%@",
+                                                                      [additionalData objectForKey:@"title"]];
+
+                                                   // Reset counter and badge_count to 1
+                                                   counter = 1;
+                                                   badge_count = 1;
+
+                                                   // sending number of received messages from the last time
+                                                   self.notification_data = [NSDictionary dictionaryWithObjectsAndKeys:
+                                                                             segment_name, @"notification_segment_name",
+                                                                             title, @"notification_title",
+                                                                             message, @"notification_message",
+                                                                             timestamp, @"last_notification_opened_on",
+                                                                             [NSNumber numberWithInteger:counter],
+                                                                             @"notification_opened_count",
+                                                                             timestamp, @"last_notification_received_on",
+                                                                             [NSNumber numberWithBool:isActive], @"is_active",
+                                                                             [NSNumber numberWithInteger:badge_count], @"notification_received_count", nil];
+
+                                                   NSError *error;
+                                                   NSData *jsonData = [NSJSONSerialization dataWithJSONObject:self.notification_data
+                                                                                                      options:NSJSONWritingPrettyPrinted
+                                                                                                        error:&error];
+
+                                                   if (! jsonData) {
+                                                       NSLog(@"{gamethrive} Got a json error: %@", error);
+                                                   } else {
+                                                       NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+                                                       [[PluginManager get] dispatchJSEvent:[NSDictionary dictionaryWithObjectsAndKeys:
+                                                                                             @"gamethriveNotificationOpened", @"name",
+                                                                                             jsonString, @"notification_data",
+                                                                                             NO, @"failed", nil]];
+
+                                                   }
+                                               }
+                                            autoRegister:YES];
+        NSLog(@"{gamethrive} initDone");
         self.initDone = YES;
-        NSLOG(@"{gamethrive} Initialized");
     }
     @catch (NSException *exception) {
         NSLog(@"{gamethrive} Failed to initialize with exception: %@", exception);
     }
+    return true;
+}
+
+- (void) initializeWithManifest:(NSDictionary *)manifest appDelegate:(TeaLeafAppDelegate *)appDelegate {
 }
 
 - (void) didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)deviceToken application:(UIApplication *)app {
@@ -69,65 +142,6 @@
 }
 
 - (void) didReceiveRemoteNotification:(NSDictionary *)userInfo application:(UIApplication *)app {
-
-    // Triggered when user opens app from notification receieved
-    // Hence notification opened count and receievd count will increment by 1
-    //tracking last launch time
-    NSDateFormatter *dateFormat = [[NSDateFormatter alloc] init];
-    [dateFormat setDateFormat: @"yyyy-MM-dd HH:mm:ss zzz"];
-    NSString *formattedDateString = [dateFormat stringFromDate:[NSDate date]];
-    NSNumber* timestamp = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970] * 1000] ;
-
-    // tracking number of launches because of notification
-    NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
-    NSInteger counter = [defaults integerForKey:@"launch_count"];
-    counter += 1;
-
-    NSInteger badge_count = [[[userInfo objectForKey:@"aps"] objectForKey:@"badge"] intValue] + 1;
-    NSInteger saved_badge_count = [defaults integerForKey:@"badge_count"];
-    badge_count += saved_badge_count;
-
-    [defaults setInteger:counter forKey:@"launch_count"];
-    [defaults setInteger:badge_count forKey:@"badge_count"];
-    [defaults synchronize];
-
-    NSDictionary* dict = [NSDictionary dictionaryWithObjectsAndKeys:
-                          [NSNumber numberWithInteger:counter], @"notification_opened_count",
-                          [NSNumber numberWithInteger:badge_count], @"notification_received_count",
-                          formattedDateString, @"last_notification_received_on",
-                          formattedDateString, @"last_notification_opened_on", nil];
-    [self.oneSignal sendTags: dict];
-
-    NSString* segment_name = [NSString stringWithFormat: @"%@",
-                              [[[userInfo objectForKey:@"custom"] objectForKey:@"a"] objectForKey:@"segment_name"]];
-
-    if([segment_name isEqualToString:@"(null)"] || segment_name == nil) {
-        segment_name = @"unknown";
-    }
-
-    NSString* message = [NSString stringWithFormat: @"%@",
-                         [[[userInfo objectForKey:@"aps"] objectForKey:@"alert"] objectForKey:@"body"]];
-    NSString* title = [NSString stringWithFormat: @"%@",
-                         [[[userInfo objectForKey:@"aps"] objectForKey:@"alert"] objectForKey:@"title"]];
-
-    // Reset counter and badge_count to 1
-    counter = 1;
-    badge_count = 1;
-
-    // sending number of received messages from the last time
-    self.notification_data = [NSDictionary dictionaryWithObjectsAndKeys:
-                        segment_name, @"notification_segment_name",
-                        title, @"notification_title",
-                        message, @"notification_message",
-                        timestamp, @"last_notification_opened_on",
-                        [NSNumber numberWithInteger:counter],
-                             @"notification_opened_count",
-                        timestamp, @"last_notification_received_on",
-                        [NSNumber numberWithInteger:badge_count], @"notification_received_count", nil];
-    [[PluginManager get] dispatchJSEvent:[NSDictionary dictionaryWithObjectsAndKeys:
-                                          @"gamethriveNotificationReceived", @"name",
-                                          [NSString stringWithFormat: @"%@",self.notification_data], @"notification_data",
-                                          NO, @"failed", nil]];
 }
 
 - (void) sendUserTags:( NSDictionary *)tags {
@@ -138,7 +152,7 @@
     }
     if(self.initDone && self.deviceToken) {
         [self.oneSignal sendTags: self.tags];
-        NSLOG(@"tags: %@", self.tags);
+        NSLog(@"tags: %@", self.tags);
         [self.tags removeAllObjects];
     }
 }
