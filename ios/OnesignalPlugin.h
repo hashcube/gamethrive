@@ -1,5 +1,5 @@
 #import "PluginManager.h"
 
-@interface GameThrivePlugin : GCPlugin
+@interface OnesignalPlugin : GCPlugin
 
 @end
