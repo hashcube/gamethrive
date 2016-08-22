@@ -3,7 +3,7 @@
 
   <xsl:param name="packageName"></xsl:param>
   <xsl:param name="googleProjectNo"></xsl:param>
-  <xsl:param name="gameThriveAppID"></xsl:param>
+  <xsl:param name="onesignalAppID"></xsl:param>
 
   <xsl:template match="meta-data[@android:name='googleProjectNo']">
     <meta-data android:name="googleProjectNo" android:value="\ {$googleProjectNo}"/>
@@ -13,8 +13,8 @@
     <meta-data android:name="googleProjectNo" android:value="\ {$googleProjectNo}"/>
   </xsl:template>
 
-  <xsl:template match="meta-data[@android:name='gameThriveAppID']">
-    <meta-data android:name="gameThriveAppID" android:value="{$gameThriveAppID}"/>
+  <xsl:template match="meta-data[@android:name='onesignalAppID']">
+    <meta-data android:name="onesignalAppID" android:value="{$onesignalAppID}"/>
   </xsl:template>
 
   <xsl:template match="permission[@android:name='c2d_message']">
