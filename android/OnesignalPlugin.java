@@ -310,4 +310,7 @@ public class OnesignalPlugin implements IPlugin {
       getNotificationOpenedCount();
     }
   }
+
+  public void getNotificationData(JSONObject jsonData) {
+  }
 }
