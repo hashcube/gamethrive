@@ -2,21 +2,19 @@
 
 ## Usage
 
-Include this module as a dependency in your game's manifest file.
+Install using
 
 ```
-"dependencies": {
-    "gamethrive": "https://github.com/hashcube/gamethrive.git#master"
-}
+devkit install https://github.com/hashcube/onesignal.git
 ```
 
-Then add `gameThriveAppID` to iOS or android section.
+Then add `onesignalAppID` to iOS or android section.
 
 ```
 "ios": {
-    "gameThriveAppID": "xx-xx-xx-xx-xx"
+    "onesignalAppID": "xx-xx-xx-xx-xx"
 },
 "android": {
-    "gameThriveAppID": "xx-xx-xx-xx-xx"
+    "onesignalAppID": "xx-xx-xx-xx-xx"
 }
 ```

@@ -1,7 +1,7 @@
 {
   "code": [
-    "GameThrivePlugin.h",
-    "GameThrivePlugin.mm"
+    "onesignalPlugin.h",
+    "onesignalPlugin.mm"
   ],
   "frameworks": [
     "SystemConfiguration",
@@ -11,9 +11,9 @@
     "-ObjC"
   ],
   "userDefined": [
-    "gameThriveAppID"
+    "onesignalAppID"
   ],
   "plist": {
-    "gameThriveAppID": "$(gamethrive.gameThriveAppID)"
+    "onesignalAppID": "$(onesignal.onesignalAppID)"
   }
 }
