@@ -1,7 +1,5 @@
 package com.tealeaf.plugin.plugins;
 
-import com.onesignal.GameBroadcastReceiver;
-
 import com.tealeaf.EventQueue;
 import com.tealeaf.plugin.IPlugin;
 import com.tealeaf.logger;
@@ -21,8 +19,10 @@ import android.content.pm.ApplicationInfo;
 
 import com.onesignal.OneSignal;
 import com.onesignal.OneSignal.*;
-
-import com.onesignal.OneSignal.NotificationOpenedHandler;
+import com.onesignal.GameBroadcastReceiver;
+import com.onesignal.OSNotification;
+import com.onesignal.OSNotificationAction;
+import com.onesignal.OSNotificationOpenResult;
 
 public class OnesignalPlugin implements IPlugin {
 
@@ -88,8 +88,6 @@ public class OnesignalPlugin implements IPlugin {
 
   @Override
   public void onPause() {
-    // super.onPause();
-    OneSignal.onPaused();
   }
 
   public void onRenderPause() {
@@ -98,7 +96,6 @@ public class OnesignalPlugin implements IPlugin {
   @Override
   public void onResume() {
     checkNotification();
-    OneSignal.onResumed();
   }
 
   public void onRenderResume() {
@@ -114,13 +111,11 @@ public class OnesignalPlugin implements IPlugin {
   }
 
   public void checkNotification() {
-    // super.onResume();
     Date notificationReceived = null;
     long time_stamp = -1;
     Integer notificationReceivedCount = 0;
     String received_data = null;
 
-    //OneSignal.onResumed();
     notificationReceived = gameBroadcastReceiver.getReceiveDate();
 
     if(notificationReceived != null ||
@@ -274,30 +269,38 @@ public class OnesignalPlugin implements IPlugin {
      * Callback to implement in your app to handle when a notification is opened from the Android status bar
      */
     @Override
-    public void notificationOpened
-    (String message, JSONObject additionalData, boolean isActive) {
+    public void notificationOpened (OSNotificationOpenResult openedResult) {
+      OSNotification notification = openedResult.notification;
+      String title = notification.payload.title;
+      String message = notification.payload.body;
+      String segment_name = null;
+      String action_id = null;
+      JSONObject additionalData = notification.payload.additionalData;
+      OSNotificationAction.ActionType actionType = openedResult.action.actionType;
+
+      if (actionType == OSNotificationAction.ActionType.ActionTaken)
+        action_id = openedResult.action.actionID;
+        logger.log(TAG, "Button pressed with id: " + action_id);
+
+      if (additionalData != null) {
+        segment_name = additionalData.optString("segment_name", null);
+        logger.log(TAG, "Full additionalData:\n" + additionalData.toString());
+      }
 
       Date current_time = new Date();
       long opened_on_time = current_time.getTime();
-      String segment_id = null;
-      String title = null;
-      int is_active = isActive ? 1: 0;
+      boolean is_active = notification.isAppInFocus;
       opened_count += 1;
-      try {
-        title = additionalData.getString("title");
-        segment_id = additionalData.getString("segment_name");
-      } catch (JSONException e) {
-        logger.log(TAG, "Error in jsondata");
-      }
 
       try {
-        onesignal_data.put("notification_segment_name", segment_id);
+        onesignal_data.put("notification_segment_name", segment_name);
         onesignal_data.put("notification_title", title);
         onesignal_data.put("notification_message", message);
         onesignal_data.put("last_notification_opened_on", opened_on_time);
         onesignal_data.put("notification_opened_count", opened_count);
         onesignal_data.put("is_active", is_active);
-        logger.log(TAG, "notification opened called");
+        onesignal_data.put("action_id", action_id);
+
         EventQueue.pushEvent(new onesignalNotificationOpened(
                            onesignal_data.toString()));
         data_to_send.put("last_notification_opened_on", current_time.toString());

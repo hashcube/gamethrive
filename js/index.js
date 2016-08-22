@@ -55,7 +55,6 @@ exports = new (Class(function() {
   };
 
   this.registerCallback = function (next) {
-    logger.log("{onesignal} at callback");
     if(cb.length < 1) {
       cb.push(next);
     }
