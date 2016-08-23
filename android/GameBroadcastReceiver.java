@@ -25,7 +25,7 @@ public class GameBroadcastReceiver extends BroadcastReceiver {
     Bundle data = intent.getExtras(); 
     title = data.getString("title");
     message = data.getString("alert");
-    logger.log("Notification received on : ", received_on_time.toString(), "{{GameThrive}}");
+    logger.log("Notification received on : ", received_on_time.toString(), "{{Onesignal}}");
     try {
       JSONObject customJSON = new JSONObject(data.getString("custom"));
       if (customJSON.has("a")) {
@@ -35,7 +35,7 @@ public class GameBroadcastReceiver extends BroadcastReceiver {
     } catch (Exception e) {
       e.printStackTrace();
     }
-    logger.log(title, segment_name, message, "{{gamethrive}} data received");
+    logger.log(title, segment_name, message, "{{onesignal}} data received");
   }
 
   public Date getReceiveDate()

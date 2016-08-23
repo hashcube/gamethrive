@@ -1,9 +1,9 @@
 {
-  "name": "gamethrive",
-  "version": "1.11.2",
+  "name": "onesignal",
+  "version": "2.0",
   "devkit": {
     "clientPaths": {
-      "gamethrive": "js"
+      "onesignal": "js"
     },
     "extensions": {
       "android": "android",

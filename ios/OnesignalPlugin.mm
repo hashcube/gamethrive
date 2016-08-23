@@ -1,7 +1,7 @@
-#import "GameThrivePlugin.h"
+#import "OnesignalPlugin.h"
 #import <OneSignal/OneSignal.h>
 
-@interface GameThrivePlugin()
+@interface OnesignalPlugin()
 
 @property (strong, nonatomic) OneSignal *oneSignal;
 @property (nonatomic, retain) NSData *deviceToken;
@@ -11,7 +11,7 @@
 
 @end
 
-@implementation GameThrivePlugin
+@implementation OnesignalPlugin
 
 // The plugin must call super dealloc.
 - (void) dealloc {
@@ -36,13 +36,13 @@
         //ONLY DURING DEBUG
         [OneSignal setLogLevel: ONE_S_LL_VERBOSE visualLevel: ONE_S_LL_NONE];
 
-        NSString *gamethriveAppId = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"gameThriveAppID"];
+        NSString *onesignalAppId = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"onesignalAppID"];
         NSDictionary *launchOptions = launchOptions;
         //initialize here
         self.oneSignal = [[OneSignal alloc] initWithLaunchOptions:launchOptions
-                                                            appId: gamethriveAppId
+                                                            appId: onesignalAppId
                                                handleNotification: ^(NSString* message, NSDictionary* additionalData, BOOL isActive) {
-                                                   NSLog(@"{gamethrive}Notification opened:\nMessage: %@", message);
+                                                   NSLog(@"{onesignal}Notification opened:\nMessage: %@", message);
                                                    // Triggered when user opens app from notification receieved
                                                    // Hence notification opened count and receievd count will increment by 1
                                                    //tracking last launch time
@@ -104,22 +104,22 @@
                                                                                                         error:&error];
 
                                                    if (! jsonData) {
-                                                       NSLog(@"{gamethrive} Got a json error: %@", error);
+                                                       NSLog(@"{onesignal} Got a json error: %@", error);
                                                    } else {
                                                        NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
                                                        [[PluginManager get] dispatchJSEvent:[NSDictionary dictionaryWithObjectsAndKeys:
-                                                                                             @"gamethriveNotificationOpened", @"name",
+                                                                                             @"onesignalNotificationOpened", @"name",
                                                                                              jsonString, @"notification_data",
                                                                                              NO, @"failed", nil]];
 
                                                    }
                                                }
                                             autoRegister:YES];
-        NSLog(@"{gamethrive} initDone");
+        NSLog(@"{onesignal} initDone");
         self.initDone = YES;
     }
     @catch (NSException *exception) {
-        NSLog(@"{gamethrive} Failed to initialize with exception: %@", exception);
+        NSLog(@"{onesignal} Failed to initialize with exception: %@", exception);
     }
     return true;
 }
@@ -138,7 +138,7 @@
 }
 
 - (void) didFailToRegisterForRemoteNotificationsWithError:(NSError *)error application:(UIApplication *)app {
-    NSLog(@"{gamethrive} didFailtoRegisterforremotenotifications: %@", error);
+    NSLog(@"{onesignal} didFailtoRegisterforremotenotifications: %@", error);
 }
 
 - (void) didReceiveRemoteNotification:(NSDictionary *)userInfo application:(UIApplication *)app {

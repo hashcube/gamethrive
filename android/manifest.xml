@@ -1,5 +1,5 @@
 <!--START_PLUGINS_MANIFEST-->
-<!-- GameThrive -->
+<!-- Onesignal -->
 <uses-permission android:name="android.permission.INTERNET" />
 <uses-permission android:name="android.permission.WAKE_LOCK" />
 <uses-permission android:name="android.permission.VIBRATE" />
@@ -13,9 +13,9 @@
 <uses-permission android:name="com.amazon.device.messaging.permission.RECEIVE" />
 <!--END_PLUGINS_MANIFEST-->
 <!--START_PLUGINS_APPLICATION-->
-<!-- GameThrive -->
+<!-- Onesignal -->
 <meta-data android:name="googleProjectNo" android:value="" />
-<meta-data android:name="gameThriveAppID" android:value="" />
+<meta-data android:name="onesignalAppID" android:value="" />
 <meta-data android:name="com.google.android.gms.version"
            android:value="@integer/google_play_services_version" />
 

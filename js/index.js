@@ -2,7 +2,7 @@
 import util.underscore as _;
 /* jshint ignore:end */
 function pluginSend(evt, params) {
-  NATIVE.plugins.sendEvent('GameThrivePlugin', evt,JSON.stringify(params || {}));
+  NATIVE.plugins.sendEvent('OnesignalPlugin', evt,JSON.stringify(params || {}));
 }
 
 function pluginOn(evt, next) {
@@ -11,8 +11,7 @@ function pluginOn(evt, next) {
 
 exports = new (Class(function() {
 
-  var that = this,
-    cb = [],
+  var cb = [],
     flag = 0,
     data = {},
     invokeCallbacks = function (list) {
@@ -32,21 +31,21 @@ exports = new (Class(function() {
       }
     };
 
-  NATIVE.events.registerHandler('gamethriveNotificationReceived', function(v) {
+  NATIVE.events.registerHandler('onesignalNotificationReceived', function(v) {
     var received_data;
 
     if (!v.failed) {
       received_data = JSON.parse(v.notification_data);
-      logger.log("{gamethrive} data at js", JSON.stringify(v));
+      logger.log("{onesignal} data at js", JSON.stringify(v));
       invokeCallbacks(cb, received_data, "NotificationReceived");
     }
   });
 
-  NATIVE.events.registerHandler('gamethriveNotificationOpened', function(v) {
+  NATIVE.events.registerHandler('onesignalNotificationOpened', function(v) {
     var received_data;
 
     received_data = JSON.parse(v.notification_data);
-    logger.log("{gamethrive} data at js", JSON.stringify(v));
+    logger.log("{onesignal} data at js", JSON.stringify(v));
     invokeCallbacks(cb, received_data, "NotificationOpened");
   });
 
@@ -56,14 +55,14 @@ exports = new (Class(function() {
   };
 
   this.registerCallback = function (next) {
-    logger.log("{gamethrive} at callback");
+    logger.log("{onesignal} at callback");
     if(cb.length < 1) {
       cb.push(next);
     }
   };
 
   this.getNotificationData = function (cb) {
-    NATIVE.plugins.sendRequest("GameThrivePlugin", "getNotificationData", {} , function (err, res) {
+    NATIVE.plugins.sendRequest("OnesignalPlugin", "getNotificationData", {} , function (err, res) {
         if (!err) {
           cb(res);
         }
